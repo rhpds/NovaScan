@@ -6,23 +6,29 @@ import re
 from pathlib import Path
 
 MODEL_PATTERNS = [
-    r'"([\w/.-]+(?:llama|granite|phi|qwen|deepseek|mistral|gemma|codellama|nomic|starcoder)[\w/.-]*)"',
-    r"'([\w/.-]+(?:llama|granite|phi|qwen|deepseek|mistral|gemma|codellama|nomic|starcoder)[\w/.-]*)'",
-    r'model["\']?\s*[:=]\s*["\']([^"\']+)["\']',
-    r'MODEL_ID["\']?\s*[:=]\s*["\']([^"\']+)["\']',
-    r'model_name["\']?\s*[:=]\s*["\']([^"\']+)["\']',
+    r'"([\w/.-]+(?:llama|granite|phi|qwen|deepseek|mistral|gemma|codellama|nomic|starcoder|whisper|bert|embed)[\w/.-]*)"',
+    r"'([\w/.-]+(?:llama|granite|phi|qwen|deepseek|mistral|gemma|codellama|nomic|starcoder|whisper|bert|embed)[\w/.-]*)'",
+    r'model["\']?\s*[:=]\s*["\']([^\"\'\n]{4,80})["\']',
+    r'MODEL_ID["\']?\s*[:=]\s*["\']([^\"\'\n]{4,80})["\']',
+    r'model_name["\']?\s*[:=]\s*["\']([^\"\'\n]{4,80})["\']',
 ]
 
 
 FALSE_POSITIVES = {
     "host-passthrough", "v-ideographic", "test-model", "model-1",
     "mock-model", "fake-model", "default-ollama-model", "ollama-model",
+    "test-crewai-model", "fallback-model", "error-model", "new-model",
+    "provider-model", "non-existent-model", "text-embedding-ada",
 }
 
 FALSE_POSITIVE_PREFIXES = ("/", "http:", "https:")
 
+FALSE_POSITIVE_SUBSTRINGS = {"\n", "\r", ";", "=>", "}{", "});", "()"}
+
 
 def _is_false_positive(name: str) -> bool:
+    if any(s in name for s in FALSE_POSITIVE_SUBSTRINGS):
+        return True
     if name.lower() in FALSE_POSITIVES:
         return True
     if any(name.startswith(p) for p in FALSE_POSITIVE_PREFIXES):
@@ -31,6 +37,8 @@ def _is_false_positive(name: str) -> bool:
         return True
     base = name.split("/")[-1] if "/" in name else name
     if len(base) < 4:
+        return True
+    if len(name) > 100:
         return True
     return False
 
