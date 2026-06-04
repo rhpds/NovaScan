@@ -1,0 +1,34 @@
+repo: /Users/jkershaw/Documents/platform-dashboard
+recommended_tier: partner
+tier_reasoning: '1 models detected (1 CPU, 1 GPU). Frameworks: vllm. Est. 4 CPU cores,
+  8GB memory.'
+resource_estimate:
+  cpu_cores: 4
+  memory_gb: 8
+  storage_gb: 20
+  gpu_count: 1
+  maas_rpm_estimate: 10
+  local_inference: false
+models_detected:
+- name: granite-3-2-8b-instruct
+  params_b: 8
+  hardware:
+  - cpu
+  - gpu
+  memory_gb: 16
+  source: maas
+  files:
+  - /Users/jkershaw/Documents/platform-dashboard/backend/orchestrator.py:18103
+  - /Users/jkershaw/Documents/platform-dashboard/backend/orchestrator.py:21510
+  - /Users/jkershaw/Documents/platform-dashboard/backend/orchestrator.py:40720
+  - /Users/jkershaw/Documents/platform-dashboard/backend/orchestrator.py:42950
+  - /Users/jkershaw/Documents/platform-dashboard/backend/main.py:6565
+agnosticv_overrides:
+  ocp4_workload_tenant_namespace_default_quota:
+    limits.cpu: '16'
+    requests.cpu: '8'
+    limits.memory: 32Gi
+    requests.memory: 16Gi
+    requests.storage: 20Gi
+  ocp4_workload_litellm_virtual_keys_models:
+  - granite-3-2-8b-instruct

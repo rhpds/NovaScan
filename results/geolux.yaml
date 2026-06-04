@@ -1,0 +1,40 @@
+repo: /Users/jkershaw/Documents/GeoLux
+recommended_tier: dedicated
+tier_reasoning: '2 models detected (0 CPU, 0 GPU). Frameworks: litellm. Local inference
+  deployment detected. Est. 12 CPU cores, 8GB memory.'
+resource_estimate:
+  cpu_cores: 12
+  memory_gb: 8
+  storage_gb: 20
+  gpu_count: 0
+  maas_rpm_estimate: 2000
+  local_inference: true
+models_detected:
+- name: v-ideographic
+  params_b: 0
+  hardware:
+  - unknown
+  memory_gb: 0
+  source: local
+  files:
+  - /Users/jkershaw/Documents/GeoLux/frontend/dist/assets/index-CteB2F9Q.js:38270
+- name: test-model
+  params_b: 0
+  hardware:
+  - unknown
+  memory_gb: 0
+  source: local
+  files:
+  - /Users/jkershaw/Documents/GeoLux/tests/integration/test_stability_integration.py:2799
+  - /Users/jkershaw/Documents/GeoLux/tests/integration/test_stability_integration.py:4301
+  - /Users/jkershaw/Documents/GeoLux/tests/integration/test_stability_integration.py:5271
+  - /Users/jkershaw/Documents/GeoLux/tests/integration/test_stability_integration.py:6049
+  - /Users/jkershaw/Documents/GeoLux/tests/integration/test_stability_integration.py:6729
+agnosticv_overrides:
+  ocp4_workload_tenant_namespace_default_quota:
+    limits.cpu: '24'
+    requests.cpu: '12'
+    limits.memory: 32Gi
+    requests.memory: 16Gi
+    requests.storage: 20Gi
+  intel_rh_inference_local_cpu_backend: true

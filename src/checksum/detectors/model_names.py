@@ -26,7 +26,7 @@ def detect(files: list[Path]) -> list[dict]:
         for pattern in MODEL_PATTERNS:
             for match in re.finditer(pattern, content, re.IGNORECASE):
                 name = match.group(1).strip()
-                if len(name) > 3 and "/" in name or "-" in name:
+                if len(name) > 3 and ("/" in name or "-" in name):
                     rel = str(f)
                     if name not in model_files:
                         model_files[name] = []

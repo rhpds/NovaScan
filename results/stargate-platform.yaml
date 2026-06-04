@@ -1,0 +1,32 @@
+repo: /Users/jkershaw/Documents/stargate-platform
+recommended_tier: dedicated
+tier_reasoning: 1 models detected (0 CPU, 0 GPU). Local inference deployment detected.
+  Est. 8 CPU cores, 8GB memory.
+resource_estimate:
+  cpu_cores: 8
+  memory_gb: 8
+  storage_gb: 20
+  gpu_count: 0
+  maas_rpm_estimate: 10
+  local_inference: true
+models_detected:
+- name: host-passthrough
+  params_b: 0
+  hardware:
+  - unknown
+  memory_gb: 0
+  source: local
+  files:
+  - /Users/jkershaw/Documents/stargate-platform/fixtures/live-cnv/vm.json:2100
+  - /Users/jkershaw/Documents/stargate-platform/fixtures/live-cnv/vm.json:8100
+  - /Users/jkershaw/Documents/stargate-platform/fixtures/live-cnv/vm.json:14183
+  - /Users/jkershaw/Documents/stargate-platform/fixtures/live-cnv/vm.json:20169
+  - /Users/jkershaw/Documents/stargate-platform/fixtures/live-cnv/vm.json:26159
+agnosticv_overrides:
+  ocp4_workload_tenant_namespace_default_quota:
+    limits.cpu: '16'
+    requests.cpu: '8'
+    limits.memory: 32Gi
+    requests.memory: 16Gi
+    requests.storage: 20Gi
+  intel_rh_inference_local_cpu_backend: true

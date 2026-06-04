@@ -8,10 +8,11 @@ from pathlib import Path
 from .scanner import scan_repo
 from .planner import recommend_tier
 from .output import write_plan
+from .validator import compare_against_agnosticv
 
 
 @click.group()
-@click.version_option()
+@click.version_option(version="0.1.0", package_name="rhdp-checksum")
 def main():
     """CheckSum — scan demo repos, recommend RHDP provisioning tiers."""
     pass
@@ -51,12 +52,80 @@ def plan(repo_path: Path, output: Path | None):
 @main.command()
 @click.argument("repo_path", type=click.Path(exists=True, path_type=Path))
 @click.argument("agnosticv_path", type=click.Path(exists=True, path_type=Path))
-def validate(repo_path: Path, agnosticv_path: Path):
+@click.option("--format", "fmt", type=click.Choice(["yaml", "table"]), default="table")
+def validate(repo_path: Path, agnosticv_path: Path, fmt: str):
     """Validate an agnosticv config against a repo scan."""
     results = scan_repo(repo_path)
     capacity_plan = recommend_tier(results)
-    click.echo(f"Recommended tier: {capacity_plan['recommended_tier']}")
-    click.echo(f"Reasoning: {capacity_plan['tier_reasoning']}")
+    comparison = compare_against_agnosticv(capacity_plan, agnosticv_path)
+
+    if fmt == "yaml":
+        import yaml
+        click.echo(yaml.dump(comparison, default_flow_style=False))
+    else:
+        _print_validation_table(comparison)
+
+
+@main.command()
+@click.argument("repos_dir", type=click.Path(exists=True, path_type=Path))
+@click.option("--output", "-o", type=click.Path(path_type=Path), default=None)
+@click.option("--format", "fmt", type=click.Choice(["yaml", "table"]), default="table")
+def batch(repos_dir: Path, output: Path | None, fmt: str):
+    """Scan all repos in a directory and summarize."""
+    from rich.console import Console
+    from rich.table import Table
+
+    repos_dir = Path(repos_dir)
+    results = []
+
+    for child in sorted(repos_dir.iterdir()):
+        if not child.is_dir():
+            continue
+        if child.name.startswith("."):
+            continue
+        try:
+            scan_results = scan_repo(child)
+            plan_result = recommend_tier(scan_results)
+            results.append(plan_result)
+        except Exception as e:
+            click.echo(f"  [skip] {child.name}: {e}", err=True)
+
+    if output:
+        import yaml
+        output.parent.mkdir(parents=True, exist_ok=True)
+        with open(output, "w") as f:
+            yaml.dump(results, f, default_flow_style=False, sort_keys=False)
+        click.echo(f"Batch results written to {output}")
+    elif fmt == "yaml":
+        import yaml
+        click.echo(yaml.dump(results, default_flow_style=False))
+    else:
+        console = Console()
+        table = Table(title="Batch Scan Summary")
+        table.add_column("Repo", style="cyan")
+        table.add_column("Tier", style="bold")
+        table.add_column("CPU", justify="right")
+        table.add_column("Memory (GB)", justify="right")
+        table.add_column("Storage (GB)", justify="right")
+        table.add_column("Models")
+        table.add_column("Local Inference")
+
+        for r in results:
+            est = r.get("resource_estimate", {})
+            models = r.get("models_detected", [])
+            repo_name = Path(r.get("repo", "")).name
+            tier = r["recommended_tier"]
+            tier_style = {"pilot": "green", "partner": "yellow", "dedicated": "red"}.get(tier, "")
+            table.add_row(
+                repo_name,
+                f"[{tier_style}]{tier}[/{tier_style}]",
+                str(est.get("cpu_cores", "?")),
+                str(round(est.get("memory_gb", 0), 1)),
+                str(round(est.get("storage_gb", 0), 1)),
+                str(len(models)),
+                "yes" if est.get("local_inference") else "no",
+            )
+        console.print(table)
 
 
 def _print_scan_table(results: dict):
@@ -93,3 +162,49 @@ def _print_scan_table(results: dict):
         console.print(f"  Memory: {r.get('memory_gb', '?')} GB")
         console.print(f"  Storage: {r.get('storage_gb', '?')} GB")
         console.print(f"  GPU: {r.get('gpu_count', 0)}")
+
+
+def _print_validation_table(comparison: dict):
+    """Print validation comparison as a rich table."""
+    from rich.console import Console
+    from rich.table import Table
+
+    console = Console()
+    console.print(f"\n[bold]Repo:[/bold] {comparison.get('repo', '?')}")
+    console.print(f"[bold]AgnosticV:[/bold] {comparison.get('agnosticv_path', '?')}")
+
+    rec_tier = comparison.get("recommended_tier", "?")
+    actual_tier = comparison.get("actual_tier", "?")
+    match = comparison.get("tier_match", False)
+    match_icon = "[green]MATCH[/green]" if match else "[red]MISMATCH[/red]"
+    console.print(f"\n[bold]Tier:[/bold] recommended={rec_tier}, actual={actual_tier} {match_icon}")
+
+    deltas = comparison.get("resource_deltas", {})
+    if deltas:
+        table = Table(title="Resource Comparison")
+        table.add_column("Resource", style="cyan")
+        table.add_column("Recommended", justify="right")
+        table.add_column("Provisioned", justify="right")
+        table.add_column("Delta", justify="right")
+        table.add_column("Status")
+
+        for key, delta in deltas.items():
+            rec_val = str(delta.get("recommended", "—"))
+            actual_val = str(delta.get("provisioned", "—"))
+            diff = delta.get("delta", 0)
+            if diff > 0:
+                status = "[yellow]over-provisioned[/yellow]"
+            elif diff < 0:
+                status = "[red]under-provisioned[/red]"
+            else:
+                status = "[green]matched[/green]"
+            table.add_row(key, rec_val, actual_val, str(diff), status)
+        console.print(table)
+
+    model_diff = comparison.get("model_coverage", {})
+    if model_diff.get("missing_from_agnosticv") or model_diff.get("extra_in_agnosticv"):
+        console.print("\n[bold]Model Coverage:[/bold]")
+        if model_diff.get("missing_from_agnosticv"):
+            console.print(f"  [red]Missing from agnosticv:[/red] {', '.join(model_diff['missing_from_agnosticv'])}")
+        if model_diff.get("extra_in_agnosticv"):
+            console.print(f"  [yellow]Extra in agnosticv:[/yellow] {', '.join(model_diff['extra_in_agnosticv'])}")

@@ -7,7 +7,7 @@ name = "rhdp-checksum"
 version = "0.1.0"
 description = "RHDP capacity planner — scan demo repos, recommend provisioning tiers"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.9"
 license = "Apache-2.0"
 authors = [
     { name = "Jonathan Kershaw", email = "jkershaw@redhat.com" },
@@ -26,3 +26,6 @@ dev = [
     "pytest>=7.0",
     "pytest-cov",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/checksum"]

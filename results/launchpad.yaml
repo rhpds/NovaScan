@@ -1,0 +1,263 @@
+repo: /Users/jkershaw/Documents/launchpad
+recommended_tier: dedicated
+tier_reasoning: '25 models detected (10 CPU, 11 GPU). Frameworks: openai, torch, transformers,
+  vllm. Local inference deployment detected. Est. 80 CPU cores, 36.0625GB memory.'
+resource_estimate:
+  cpu_cores: 80
+  memory_gb: 36.0625
+  storage_gb: 72.0
+  gpu_count: 1
+  maas_rpm_estimate: 50
+  local_inference: true
+models_detected:
+- name: demos/quickstarts/vllm-tool-calling/vllm-tool-calling/granite3.2-8b/cpu
+  params_b: 8.0
+  hardware:
+  - gpu
+  memory_gb: 0
+  source: local
+  files:
+  - /Users/jkershaw/Documents/launchpad/backend/app/adapters/mock/catalog.py:20817
+- name: granite-3-2-8b
+  params_b: 8.0
+  hardware:
+  - gpu
+  memory_gb: 0
+  source: local
+  files:
+  - /Users/jkershaw/Documents/launchpad/backend/tests/test_e2e_integration.py:1015
+- name: TinyLlama/TinyLlama-1.1B-Chat-v1.0
+  params_b: 1.1
+  hardware:
+  - cpu
+  memory_gb: 2.5
+  source: local
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/tools/inference-test-client/client.py:9860
+  - /Users/jkershaw/Documents/launchpad/demos/tests/test_cpu_inference_local.py:467
+  - /Users/jkershaw/Documents/launchpad/demos/tests/test_cpu_inference_local.py:2826
+  - /Users/jkershaw/Documents/launchpad/demos/tests/test_cpu_inference_local.py:3511
+  - /Users/jkershaw/Documents/launchpad/demos/tests/test_cpu_inference_local.py:4307
+- name: codellama-7b-instruct
+  params_b: 7
+  hardware:
+  - cpu
+  - gpu
+  memory_gb: 14
+  source: maas
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/BuildYourOwn.tsx:1028
+  - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/BuildYourOwn.tsx:1390
+  - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/BuildYourOwn.tsx:3716
+  - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/BuildYourOwn.tsx:1021
+  - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/LiveWorkflow.tsx:18841
+- name: deepseek-r1-distill-qwen-14b
+  params_b: 14
+  hardware:
+  - gpu
+  memory_gb: 28
+  source: maas
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/BuildYourOwn.tsx:1154
+  - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/BuildYourOwn.tsx:1147
+  - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/LiveWorkflow.tsx:19148
+- name: granite-4-0-h-tiny
+  params_b: 1
+  hardware:
+  - cpu
+  memory_gb: 2
+  source: maas
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/BuildYourOwn.tsx:963
+  - /Users/jkershaw/Documents/launchpad/demos/frontend/src/pages/Overdrive.tsx:2222
+  - /Users/jkershaw/Documents/launchpad/demos/gateway/overdrive/swarm.py:772
+  - /Users/jkershaw/Documents/launchpad/demos/gateway/overdrive/swarm.py:2215
+  - /Users/jkershaw/Documents/launchpad/demos/gateway/overdrive/swarm.py:4218
+- name: granite-3-2-8b-instruct
+  params_b: 8
+  hardware:
+  - cpu
+  - gpu
+  memory_gb: 16
+  source: maas
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/BuildYourOwn.tsx:1082
+  - /Users/jkershaw/Documents/launchpad/demos/gateway/overdrive/research_agent.py:9091
+  - /Users/jkershaw/Documents/launchpad/tenant/bootstrap/values.yaml:621
+- name: llama-scout-17b
+  params_b: 17
+  hardware:
+  - gpu
+  memory_gb: 34
+  source: maas
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/BuildYourOwn.tsx:1217
+  - /Users/jkershaw/Documents/launchpad/demos/frontend/src/pages/Overdrive.tsx:3058
+  - /Users/jkershaw/Documents/launchpad/demos/gateway/overdrive/swarm.py:1234
+  - /Users/jkershaw/Documents/launchpad/demos/gateway/overdrive/swarm.py:1457
+  - /Users/jkershaw/Documents/launchpad/demos/gateway/overdrive/swarm.py:1685
+- name: Qwen2.5-7B
+  params_b: 7.0
+  hardware:
+  - gpu
+  memory_gb: 0
+  source: local
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/tests/test_training_e2e.py:2411
+- name: sentence-transformers/all-MiniLM-L6-v2
+  params_b: 0
+  hardware:
+  - unknown
+  memory_gb: 0
+  source: local
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/scripts/export-models.sh:986
+- name: cross-encoder/ms-marco-MiniLM-L-6-v2
+  params_b: 0
+  hardware:
+  - unknown
+  memory_gb: 0
+  source: local
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/scripts/export-models.sh:1080
+- name: distilbert-base-uncased-finetuned-sst-2-english
+  params_b: 0
+  hardware:
+  - unknown
+  memory_gb: 0
+  source: local
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/scripts/export-models.sh:1173
+- name: ${MODEL_NAME:-TinyLlama/TinyLlama-1.1B-Chat-v1.0}
+  params_b: 1.0
+  hardware:
+  - cpu
+  memory_gb: 0
+  source: local
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/containers/vllm-gaudi/entrypoint.sh:666
+- name: ibm-granite/granite-3.0-2b-instruct
+  params_b: 2.0
+  hardware:
+  - cpu
+  memory_gb: 0
+  source: local
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/gateway/router.py:57967
+- name: codellama/CodeLlama-7b-Instruct-hf
+  params_b: 7.0
+  hardware:
+  - gpu
+  memory_gb: 0
+  source: local
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/gateway/router.py:58047
+- name: meta-llama/Llama-3.2-3B-Instruct
+  params_b: 3.0
+  hardware:
+  - cpu
+  memory_gb: 0
+  source: local
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/gateway/router.py:58120
+  - /Users/jkershaw/Documents/launchpad/demos/quickstarts/rag/tests/integration/llamastack/conftest.py:402
+  - /Users/jkershaw/Documents/launchpad/demos/quickstarts/rag/tests/integration/llamastack/test_user_workflow.py:462
+  - /Users/jkershaw/Documents/launchpad/demos/quickstarts/vllm-tool-calling/vllm-tool-calling/llama3.2-3b/hpu/inferenceservice.yaml:2643
+  - /Users/jkershaw/Documents/launchpad/demos/quickstarts/vllm-tool-calling/vllm-tool-calling/llama3.2-3b/hpu/servingruntime.yaml:1933
+- name: nomic-embed-text-v1-5
+  params_b: 0.14
+  hardware:
+  - cpu
+  memory_gb: 1
+  source: maas
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/gateway/router.py:18736
+  - /Users/jkershaw/Documents/launchpad/demos/gateway/router.py:19089
+  - /Users/jkershaw/Documents/launchpad/demos/gateway/router.py:19908
+  - /Users/jkershaw/Documents/launchpad/demos/gateway/router.py:20376
+  - /Users/jkershaw/Documents/launchpad/demos/gateway/router.py:21041
+- name: meta-llama/Llama-Guard-3-8B
+  params_b: 8.0
+  hardware:
+  - gpu
+  memory_gb: 0
+  source: local
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/quickstarts/rag/client-examples-python/register-shield.py:318
+- name: all-MiniLM-L6-v2
+  params_b: 0
+  hardware:
+  - unknown
+  memory_gb: 0
+  source: local
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/quickstarts/rag/client-examples-python/rag-create-vector-db.py:797
+  - /Users/jkershaw/Documents/launchpad/demos/quickstarts/rag/tests/integration/test_upload_integration.py:3456
+  - /Users/jkershaw/Documents/launchpad/demos/quickstarts/rag/tests/integration/test_upload_integration.py:6875
+  - /Users/jkershaw/Documents/launchpad/demos/quickstarts/rag/tests/integration/test_upload_integration.py:7784
+  - /Users/jkershaw/Documents/launchpad/demos/quickstarts/rag/tests/integration/llamastack/conftest.py:4248
+- name: microsoft/phi-2
+  params_b: 0
+  hardware:
+  - unknown
+  memory_gb: 0
+  source: local
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/deploy/gaudi-inference/inference-service.yaml:1088
+- name: microsoft/Phi-3-mini-4k-instruct
+  params_b: 0
+  hardware:
+  - unknown
+  memory_gb: 0
+  source: local
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/deploy/gaudi-inference/inference-service.yaml:1131
+- name: meta-llama/Llama-2-7b-chat-hf
+  params_b: 7.0
+  hardware:
+  - gpu
+  memory_gb: 0
+  source: local
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/deploy/gaudi-inference/inference-service.yaml:1191
+- name: llama3.2:3b-instruct-fp16
+  params_b: 3.0
+  hardware:
+  - cpu
+  memory_gb: 0
+  source: local
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/quickstarts/rag/deploy/local/podman-compose.yml:743
+- name: ibm-granite/granite-8b-code-instruct-4k
+  params_b: 8.0
+  hardware:
+  - gpu
+  memory_gb: 0
+  source: local
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/quickstarts/vllm-tool-calling/vllm-tool-calling/granite3.2-8b/hpu/inferenceservice.yaml:2650
+  - /Users/jkershaw/Documents/launchpad/demos/quickstarts/vllm-tool-calling/vllm-tool-calling/granite3.2-8b/hpu/servingruntime.yaml:1927
+- name: meta-llama/Llama-3.2-1B-Instruct
+  params_b: 1.0
+  hardware:
+  - cpu
+  memory_gb: 0
+  source: local
+  files:
+  - /Users/jkershaw/Documents/launchpad/demos/quickstarts/vllm-tool-calling/vllm-tool-calling/llama3.2-1b/hpu/inferenceservice.yaml:2643
+  - /Users/jkershaw/Documents/launchpad/demos/quickstarts/vllm-tool-calling/vllm-tool-calling/llama3.2-1b/hpu/servingruntime.yaml:1933
+agnosticv_overrides:
+  ocp4_workload_tenant_namespace_default_quota:
+    limits.cpu: '160'
+    requests.cpu: '80'
+    limits.memory: 72.125Gi
+    requests.memory: 36.0625Gi
+    requests.storage: 72.0Gi
+  ocp4_workload_litellm_virtual_keys_models:
+  - codellama-7b-instruct
+  - deepseek-r1-distill-qwen-14b
+  - granite-4-0-h-tiny
+  - granite-3-2-8b-instruct
+  - llama-scout-17b
+  - nomic-embed-text-v1-5
+  intel_rh_inference_local_cpu_backend: true

@@ -1,0 +1,73 @@
+repo: /Users/jkershaw/Documents/deepfield
+recommended_tier: dedicated
+tier_reasoning: 5 models detected (2 CPU, 4 GPU). Est. 128.75 CPU cores, 1025.03125GB
+  memory.
+resource_estimate:
+  cpu_cores: 128.75
+  memory_gb: 1025.03125
+  storage_gb: 20
+  gpu_count: 1
+  maas_rpm_estimate: 200
+  local_inference: false
+models_detected:
+- name: deepseek-r1-distill-qwen-14b
+  params_b: 14
+  hardware:
+  - gpu
+  memory_gb: 28
+  source: maas
+  files:
+  - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:645
+  - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:637
+- name: microsoft-phi-4
+  params_b: 14
+  hardware:
+  - gpu
+  memory_gb: 28
+  source: maas
+  files:
+  - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:764
+  - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:756
+- name: qwen3-14b
+  params_b: 14
+  hardware:
+  - gpu
+  memory_gb: 28
+  source: maas
+  files:
+  - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:869
+  - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:976
+- name: granite-4-0-h-tiny
+  params_b: 1
+  hardware:
+  - cpu
+  memory_gb: 2
+  source: maas
+  files:
+  - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:1148
+  - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:1465
+  - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:1581
+- name: granite-3-2-8b-instruct
+  params_b: 8
+  hardware:
+  - cpu
+  - gpu
+  memory_gb: 16
+  source: maas
+  files:
+  - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:1265
+  - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:1697
+agnosticv_overrides:
+  ocp4_workload_tenant_namespace_default_quota:
+    limits.cpu: '257.5'
+    requests.cpu: '128.75'
+    limits.memory: 2050.0625Gi
+    requests.memory: 1025.03125Gi
+    requests.storage: 20Gi
+  ocp4_workload_litellm_virtual_keys_models:
+  - deepseek-r1-distill-qwen-14b
+  - microsoft-phi-4
+  - qwen3-14b
+  - granite-4-0-h-tiny
+  - granite-3-2-8b-instruct
+  intel_rh_inference_local_cpu_backend: true
