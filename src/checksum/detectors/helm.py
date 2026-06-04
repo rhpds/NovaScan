@@ -33,20 +33,16 @@ def detect(source_files: list[Path], config_files: list[Path]) -> dict:
             except OSError:
                 pass
 
-    total_cpu = sum(r.get("cpu_request", 0) for r in values_resources.values())
-    total_mem = sum(r.get("memory_request_gb", 0) for r in values_resources.values())
-    total_storage = sum(r.get("storage_gb", 0) for r in values_resources.values())
-    replicas = sum(r.get("replicas", 1) for r in values_resources.values())
-
-    if not total_cpu and template_resources:
-        total_cpu = sum(r.get("cpu_request", 0) for r in template_resources.values())
-        total_mem = sum(r.get("memory_request_gb", 0) for r in template_resources.values())
-        total_storage = sum(r.get("storage_gb", 0) for r in template_resources.values())
+    all_resources = {**values_resources, **template_resources}
+    total_cpu = sum(r.get("cpu_request", 0) for r in all_resources.values() if isinstance(r, dict))
+    total_mem = sum(r.get("memory_request_gb", 0) for r in all_resources.values() if isinstance(r, dict))
+    total_storage = sum(r.get("storage_gb", 0) for r in all_resources.values() if isinstance(r, dict))
+    replicas = sum(r.get("replicas", 1) for r in all_resources.values() if isinstance(r, dict) and "cpu_request" in r)
 
     return {
         "charts_found": len(charts),
         "deploy_method": deploy_method,
-        "components": {**values_resources, **template_resources},
+        "components": all_resources,
         "total_cpu_request": round(total_cpu * max(replicas, 1) if total_cpu else 0, 2),
         "total_memory_gb": round(total_mem, 2),
         "total_storage_gb": round(total_storage, 2),
@@ -96,10 +92,12 @@ def _walk_values(data: dict, prefix: str, resources: dict):
         limits = res.get("limits", {})
         if requests or limits:
             name = prefix.rstrip(".") or "main"
+            raw_replicas = data.get("replicaCount", data.get("replicas", 1))
+            replica_count = raw_replicas if isinstance(raw_replicas, int) else 1
             resources[name] = {
                 "cpu_request": _parse_cpu(requests.get("cpu", limits.get("cpu", "0"))),
                 "memory_request_gb": _parse_mem_gb(requests.get("memory", limits.get("memory", "0"))),
-                "replicas": data.get("replicaCount", data.get("replicas", 1)),
+                "replicas": replica_count,
             }
 
     if "persistence" in data and isinstance(data["persistence"], dict):
