@@ -59,8 +59,8 @@ def recommend_tier(scan_results: dict) -> dict:
 def _needs_gateway(scan_results: dict) -> bool:
     """Check if the demo needs a gateway/frontend deployment."""
     frameworks = scan_results.get("frameworks_detected", [])
-    k8s = scan_results.get("k8s_resources", {})
-    return bool(frameworks) or k8s.get("manifest_count", 0) > 0
+    models = scan_results.get("models_detected", [])
+    return bool(frameworks) or bool(models)
 
 
 def _build_reasoning(tier: str, estimate: dict, models: list, frameworks: list) -> str:

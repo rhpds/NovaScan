@@ -1,0 +1,1155 @@
+- repo: /Users/jkershaw/Documents/GeoLux
+  recommended_tier: partner
+  tier_reasoning: 'Frameworks: litellm. Est. 4 CPU cores, 8GB memory.'
+  resource_estimate:
+    cpu_cores: 4
+    memory_gb: 8
+    storage_gb: 20
+    gpu_count: 0
+    maas_rpm_estimate: 2000
+    local_inference: false
+  models_detected: []
+  agnosticv_overrides:
+    ocp4_workload_tenant_namespace_default_quota:
+      limits.cpu: '16'
+      requests.cpu: '8'
+      limits.memory: 32Gi
+      requests.memory: 16Gi
+      requests.storage: 20Gi
+- repo: /Users/jkershaw/Documents/StarGate
+  recommended_tier: pilot
+  tier_reasoning: No local inference or heavy compute detected. MAAS API key is sufficient.
+  resource_estimate:
+    cpu_cores: 4
+    memory_gb: 8
+    storage_gb: 20
+    gpu_count: 0
+    maas_rpm_estimate: 10
+    local_inference: false
+  models_detected: []
+  agnosticv_overrides: {}
+- repo: /Users/jkershaw/Documents/agentobs
+  recommended_tier: pilot
+  tier_reasoning: No local inference or heavy compute detected. MAAS API key is sufficient.
+  resource_estimate:
+    cpu_cores: 4
+    memory_gb: 8
+    storage_gb: 20
+    gpu_count: 0
+    maas_rpm_estimate: 10
+    local_inference: false
+  models_detected: []
+  agnosticv_overrides: {}
+- repo: /Users/jkershaw/Documents/checksum
+  recommended_tier: dedicated
+  tier_reasoning: '5 models detected (3 CPU, 3 GPU). Frameworks: openai, transformers,
+    vllm. Local inference deployment detected. Est. 8 CPU cores, 10.5GB memory.'
+  resource_estimate:
+    cpu_cores: 8
+    memory_gb: 10.5
+    storage_gb: 20
+    gpu_count: 1
+    maas_rpm_estimate: 320
+    local_inference: true
+  models_detected:
+  - name: deepseek-r1-distill-qwen-14b
+    params_b: 14
+    hardware: &id001
+    - gpu
+    memory_gb: 28
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/checksum/tests/test_detectors.py:1693
+    - /Users/jkershaw/Documents/checksum/tests/test_detectors.py:1830
+    - /Users/jkershaw/Documents/checksum/tests/test_detectors.py:1686
+    - /Users/jkershaw/Documents/checksum/src/checksum/catalog.py:782
+    - /Users/jkershaw/Documents/checksum/src/checksum/catalog.py:1573
+  - name: TinyLlama/TinyLlama-1.1B-Chat-v1.0
+    params_b: 1.1
+    hardware: &id007
+    - cpu
+    memory_gb: 2.5
+    source: local
+    files:
+    - /Users/jkershaw/Documents/checksum/tests/test_detectors.py:2005
+    - /Users/jkershaw/Documents/checksum/tests/test_detectors.py:1994
+    - /Users/jkershaw/Documents/checksum/tests/test_planner.py:1656
+    - /Users/jkershaw/Documents/checksum/src/checksum/catalog.py:1302
+  - name: granite-2b-cpu
+    params_b: 2
+    hardware:
+    - cpu
+    memory_gb: 4
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/checksum/tests/test_detectors.py:1405
+  - name: codellama-7b-instruct
+    params_b: 7
+    hardware: &id003
+    - cpu
+    - gpu
+    memory_gb: 14
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/checksum/src/checksum/catalog.py:554
+    - /Users/jkershaw/Documents/checksum/src/checksum/catalog.py:1521
+  - name: microsoft-phi-4
+    params_b: 14
+    hardware: &id002
+    - gpu
+    memory_gb: 28
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/checksum/src/checksum/catalog.py:997
+    - /Users/jkershaw/Documents/checksum/src/checksum/catalog.py:1628
+  agnosticv_overrides:
+    ocp4_workload_tenant_namespace_default_quota:
+      limits.cpu: '16'
+      requests.cpu: '8'
+      limits.memory: 32Gi
+      requests.memory: 16Gi
+      requests.storage: 20Gi
+    ocp4_workload_litellm_virtual_keys_models:
+    - deepseek-r1-distill-qwen-14b
+    - granite-2b-cpu
+    - codellama-7b-instruct
+    - microsoft-phi-4
+    intel_rh_inference_local_cpu_backend: true
+- repo: /Users/jkershaw/Documents/deepfield
+  recommended_tier: dedicated
+  tier_reasoning: 5 models detected (2 CPU, 4 GPU). Est. 128.75 CPU cores, 1025.03125GB
+    memory.
+  resource_estimate:
+    cpu_cores: 128.75
+    memory_gb: 1025.03125
+    storage_gb: 20
+    gpu_count: 1
+    maas_rpm_estimate: 200
+    local_inference: false
+  models_detected:
+  - name: deepseek-r1-distill-qwen-14b
+    params_b: 14
+    hardware: *id001
+    memory_gb: 28
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:645
+    - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:637
+  - name: microsoft-phi-4
+    params_b: 14
+    hardware: *id002
+    memory_gb: 28
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:764
+    - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:756
+  - name: qwen3-14b
+    params_b: 14
+    hardware: &id004
+    - gpu
+    memory_gb: 28
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:869
+    - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:976
+  - name: granite-4-0-h-tiny
+    params_b: 1
+    hardware: &id008
+    - cpu
+    memory_gb: 2
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:1148
+    - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:1465
+    - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:1581
+  - name: granite-3-2-8b-instruct
+    params_b: 8
+    hardware: &id005
+    - cpu
+    - gpu
+    memory_gb: 16
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:1265
+    - /Users/jkershaw/Documents/deepfield/backend/app/inference/adapters.py:1697
+  agnosticv_overrides:
+    ocp4_workload_tenant_namespace_default_quota:
+      limits.cpu: '257.5'
+      requests.cpu: '128.75'
+      limits.memory: 2050.0625Gi
+      requests.memory: 1025.03125Gi
+      requests.storage: 20Gi
+    ocp4_workload_litellm_virtual_keys_models:
+    - deepseek-r1-distill-qwen-14b
+    - microsoft-phi-4
+    - qwen3-14b
+    - granite-4-0-h-tiny
+    - granite-3-2-8b-instruct
+    intel_rh_inference_local_cpu_backend: true
+- repo: /Users/jkershaw/Documents/github review
+  recommended_tier: dedicated
+  tier_reasoning: 17 models detected (2 CPU, 9 GPU). Local inference deployment detected.
+    Est. 48 CPU cores, 8GB memory.
+  resource_estimate:
+    cpu_cores: 48
+    memory_gb: 8
+    storage_gb: 20
+    gpu_count: 1
+    maas_rpm_estimate: 1000
+    local_inference: true
+  models_detected:
+  - name: claude-haiku-4-5-20251001
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/github review/parsec-triage/tests/unit/test_haiku_fallback.py:900
+    - /Users/jkershaw/Documents/github review/chatbot-log-analyzer/backend/api/services/llm_providers.py:4236
+    - /Users/jkershaw/Documents/github review/parsec-triage/config/settings.yaml:579
+  - name: claude-sonnet-4-6
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/github review/demolition/coordinator/dev-services.sh:1208
+    - /Users/jkershaw/Documents/github review/demolition/src/security-scanner.ts:16292
+    - /Users/jkershaw/Documents/github review/demolition/src/browser-workflow.ts:11631
+    - /Users/jkershaw/Documents/github review/demolition/src/browser-workflow.ts:14487
+    - /Users/jkershaw/Documents/github review/demolition/src/browser-workflow.ts:17532
+  - name: claude-sonnet-4-5-20250929
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/github review/chatbot-log-analyzer/frontend/src/__tests__/App.test.tsx:3699
+    - /Users/jkershaw/Documents/github review/chatbot-log-analyzer/frontend/src/__tests__/mocks/providers.ts:131
+    - /Users/jkershaw/Documents/github review/chatbot-log-analyzer/frontend/src/__tests__/mocks/providers.ts:376
+    - /Users/jkershaw/Documents/github review/chatbot-log-analyzer/frontend/src/__tests__/components/ChatMessage.test.tsx:1391
+  - name: gemini-2.0-flash
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/github review/chatbot-log-analyzer/frontend/src/__tests__/mocks/providers.ts:1233
+  - name: claude-3
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/github review/chatbot-log-analyzer/frontend/src/__tests__/services/api.test.ts:1950
+  - name: gemini-pro
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/github review/chatbot-log-analyzer/backend/tests/test_config_store.py:1541
+  - name: models/text-embedding-004
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/github review/chatbot-log-analyzer/backend/api/services/rag_service.py:7026
+  - name: claude-opus-4-6
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/github review/chatbot-log-analyzer/backend/api/services/config_store.py:15841
+  - name: codellama-7b-instruct
+    params_b: 7
+    hardware: *id003
+    memory_gb: 14
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/github review/agnosticv/agd_v2/ocp-field-asset-cnv/common.yaml:13558
+    - /Users/jkershaw/Documents/github review/agnosticv/tests/litemaas-benchmark-ci/common.yaml:2990
+    - /Users/jkershaw/Documents/github review/agnosticv/openshift_cnv/litemaas-virt-key-usage-example-cnv/common.yaml:3803
+    - /Users/jkershaw/Documents/github review/agnosticv/published/ocp-field-asset/common.yaml:6320
+  - name: deepseek-r1-distill-qwen-14b
+    params_b: 14
+    hardware: *id001
+    memory_gb: 28
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/github review/agnosticv/agd_v2/ocp-field-asset-cnv/common.yaml:13592
+    - /Users/jkershaw/Documents/github review/agnosticv/tests/litemaas-benchmark-ci/common.yaml:3284
+    - /Users/jkershaw/Documents/github review/agnosticv/openshift_cnv/litemaas-virt-key-usage-example-cnv/common.yaml:3505
+    - /Users/jkershaw/Documents/github review/agnosticv/published/ocp-field-asset/common.yaml:6354
+  - name: microsoft-phi-4
+    params_b: 14
+    hardware: *id002
+    memory_gb: 28
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/github review/agnosticv/agd_v2/ocp-field-asset-cnv/common.yaml:13757
+    - /Users/jkershaw/Documents/github review/agnosticv/tests/litemaas-benchmark-ci/common.yaml:3497
+    - /Users/jkershaw/Documents/github review/agnosticv/openshift_cnv/litemaas-virt-key-usage-example-cnv/common.yaml:3615
+    - /Users/jkershaw/Documents/github review/agnosticv/published/ocp-field-asset/common.yaml:6519
+  - name: openai/qwen3-14b
+    params_b: 14
+    hardware: *id004
+    memory_gb: 28
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/github review/agnosticv/agd_v2/mcp-with-openshift/common.yaml:11534
+    - /Users/jkershaw/Documents/github review/agnosticv/agd_v2/mcp-with-openshift/common.yaml:11522
+  - name: rh-llama-3.3-70B-instruct-quantized
+    params_b: 70.0
+    hardware:
+    - gpu
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/github review/agnosticv/tests/litemaas-benchmark-ci/common.yaml:2865
+  - name: openai/granite-3-2-8b-instruct
+    params_b: 8
+    hardware: *id005
+    memory_gb: 16
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/github review/agnosticv/openshift_cnv/ai-driven-automation/dev.yaml:29630
+    - /Users/jkershaw/Documents/github review/agnosticv/openshift_cnv/ai-driven-automation/dev.yaml:34216
+    - /Users/jkershaw/Documents/github review/agnosticv/openshift_cnv/ai-driven-automation/dev.yaml:29618
+    - /Users/jkershaw/Documents/github review/agnosticv/openshift_cnv/ai-driven-automation/dev.yaml:34204
+    - /Users/jkershaw/Documents/github review/agnosticv/openshift_cnv/ai-driven-automation/common.yaml:30524
+  - name: granite-8b-lab-v1
+    params_b: 8.0
+    hardware:
+    - gpu
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/github review/agnosticv/openshift_cnv/ai-driven-automation/common.yaml:37787
+  - name: llama-scout-17b
+    params_b: 17
+    hardware: &id006
+    - gpu
+    memory_gb: 34
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/github review/agnosticv/summit-2026/lb2645-agentic-devops-tenant/common.yaml:6929
+  - name: RedHatAI/granite-3.1-8b-instruct-quantized.w8a8
+    params_b: 8.0
+    hardware:
+    - gpu
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/github review/agnosticv/rhdp/innovation-day-3/dev.yaml:981
+    - /Users/jkershaw/Documents/github review/agnosticv/rhdp/innovation-day-3/dev.yaml:974
+  agnosticv_overrides:
+    ocp4_workload_tenant_namespace_default_quota:
+      limits.cpu: '96'
+      requests.cpu: '48'
+      limits.memory: 32Gi
+      requests.memory: 16Gi
+      requests.storage: 20Gi
+    ocp4_workload_litellm_virtual_keys_models:
+    - codellama-7b-instruct
+    - deepseek-r1-distill-qwen-14b
+    - microsoft-phi-4
+    - openai/qwen3-14b
+    - openai/granite-3-2-8b-instruct
+    - llama-scout-17b
+    intel_rh_inference_local_cpu_backend: true
+- repo: /Users/jkershaw/Documents/infra
+  recommended_tier: pilot
+  tier_reasoning: No local inference or heavy compute detected. MAAS API key is sufficient.
+  resource_estimate:
+    cpu_cores: 4
+    memory_gb: 8
+    storage_gb: 20
+    gpu_count: 0
+    maas_rpm_estimate: 10
+    local_inference: false
+  models_detected: []
+  agnosticv_overrides: {}
+- repo: /Users/jkershaw/Documents/kagenti
+  recommended_tier: dedicated
+  tier_reasoning: '13 models detected (0 CPU, 1 GPU). Frameworks: litellm, openai.
+    Local inference deployment detected. Est. 52 CPU cores, 8GB memory.'
+  resource_estimate:
+    cpu_cores: 52
+    memory_gb: 8
+    storage_gb: 20
+    gpu_count: 1
+    maas_rpm_estimate: 20
+    local_inference: true
+  models_detected:
+  - name: claude-sonnet-4-20250514
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/kagenti/repo/kagenti/tests/e2e/openshell/test_T0_5_infra_litellm.py:8377
+    - /Users/jkershaw/Documents/kagenti/repo/scripts/openshell/deploy-shared.sh:22662
+  - name: gpt-4o-mini
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/kagenti/repo/kagenti/tests/e2e/openshell/test_T1_1_connectivity.py:7073
+    - /Users/jkershaw/Documents/kagenti/repo/kagenti/tests/e2e/openshell/test_T1_1_connectivity.py:9007
+    - /Users/jkershaw/Documents/kagenti/repo/kagenti/tests/e2e/openshell/test_T0_4_infra_nemoclaw.py:5980
+    - /Users/jkershaw/Documents/kagenti/repo/kagenti/backend/app/services/acp_bridge.py:9354
+    - /Users/jkershaw/Documents/kagenti/repo/scripts/openshell/deploy-shared.sh:21347
+  - name: llama-4-scout
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/kagenti/repo/kagenti/ui-v2/src/components/SandboxWizard.tsx:3145
+  - name: claude-opus-4-6
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/kagenti/repo/.claude/scripts/session-analytics.py:71083
+    - /Users/jkershaw/Documents/kagenti/repo/.claude/scripts/session-analytics.py:72211
+    - /Users/jkershaw/Documents/kagenti/repo/.claude/scripts/session-analytics.py:89759
+  - name: gpt-4o
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/kagenti/repo/scripts/openshell/deploy-shared.sh:21537
+  - name: gpt-4
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/kagenti/repo/scripts/openshell/deploy-shared.sh:21722
+  - name: gpt-5-nano
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/kagenti/repo/scripts/openshell/deploy-shared.sh:21906
+  - name: gpt-5
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/kagenti/repo/scripts/openshell/deploy-shared.sh:22095
+  - name: gpt-5-mini
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/kagenti/repo/scripts/openshell/deploy-shared.sh:22279
+  - name: claude-haiku-4-20250414
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/kagenti/repo/scripts/openshell/deploy-shared.sh:22865
+  - name: deepseek-r1
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/kagenti/repo/scripts/openshell/deploy-shared.sh:23067
+  - name: llama-scout-17b
+    params_b: 17
+    hardware: *id006
+    memory_gb: 34
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/kagenti/repo/.github/scripts/kagenti-operator/74-deploy-weather-agent.sh:6119
+  - name: openai/llama-4-scout
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/kagenti/repo/deployments/openshell/agents/adk-agent-supervised/agent.py:816
+  agnosticv_overrides:
+    ocp4_workload_tenant_namespace_default_quota:
+      limits.cpu: '104'
+      requests.cpu: '52'
+      limits.memory: 32Gi
+      requests.memory: 16Gi
+      requests.storage: 20Gi
+    ocp4_workload_litellm_virtual_keys_models:
+    - llama-scout-17b
+    intel_rh_inference_local_cpu_backend: true
+- repo: /Users/jkershaw/Documents/launchpad
+  recommended_tier: dedicated
+  tier_reasoning: '23 models detected (9 CPU, 10 GPU). Frameworks: openai, torch,
+    transformers, vllm. Local inference deployment detected. Est. 72 CPU cores, 36.0625GB
+    memory.'
+  resource_estimate:
+    cpu_cores: 72
+    memory_gb: 36.0625
+    storage_gb: 72.0
+    gpu_count: 1
+    maas_rpm_estimate: 50
+    local_inference: true
+  models_detected:
+  - name: granite-3-2-8b
+    params_b: 8.0
+    hardware:
+    - gpu
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/launchpad/backend/tests/test_e2e_integration.py:1015
+  - name: TinyLlama/TinyLlama-1.1B-Chat-v1.0
+    params_b: 1.1
+    hardware: *id007
+    memory_gb: 2.5
+    source: local
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/tools/inference-test-client/client.py:9860
+    - /Users/jkershaw/Documents/launchpad/demos/tests/test_cpu_inference_local.py:467
+    - /Users/jkershaw/Documents/launchpad/demos/tests/test_cpu_inference_local.py:2826
+    - /Users/jkershaw/Documents/launchpad/demos/tests/test_cpu_inference_local.py:3511
+    - /Users/jkershaw/Documents/launchpad/demos/tests/test_cpu_inference_local.py:4307
+  - name: codellama-7b-instruct
+    params_b: 7
+    hardware: *id003
+    memory_gb: 14
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/BuildYourOwn.tsx:1028
+    - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/BuildYourOwn.tsx:1390
+    - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/BuildYourOwn.tsx:3716
+    - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/BuildYourOwn.tsx:1021
+    - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/LiveWorkflow.tsx:18841
+  - name: deepseek-r1-distill-qwen-14b
+    params_b: 14
+    hardware: *id001
+    memory_gb: 28
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/BuildYourOwn.tsx:1154
+    - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/BuildYourOwn.tsx:1147
+    - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/LiveWorkflow.tsx:19148
+  - name: granite-4-0-h-tiny
+    params_b: 1
+    hardware: *id008
+    memory_gb: 2
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/BuildYourOwn.tsx:963
+    - /Users/jkershaw/Documents/launchpad/demos/frontend/src/pages/Overdrive.tsx:2222
+    - /Users/jkershaw/Documents/launchpad/demos/gateway/overdrive/swarm.py:772
+    - /Users/jkershaw/Documents/launchpad/demos/gateway/overdrive/swarm.py:2215
+    - /Users/jkershaw/Documents/launchpad/demos/gateway/overdrive/swarm.py:4218
+  - name: granite-3-2-8b-instruct
+    params_b: 8
+    hardware: *id005
+    memory_gb: 16
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/BuildYourOwn.tsx:1082
+    - /Users/jkershaw/Documents/launchpad/demos/gateway/overdrive/research_agent.py:9091
+    - /Users/jkershaw/Documents/launchpad/tenant/bootstrap/values.yaml:621
+  - name: llama-scout-17b
+    params_b: 17
+    hardware: *id006
+    memory_gb: 34
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/frontend/src/components/BuildYourOwn.tsx:1217
+    - /Users/jkershaw/Documents/launchpad/demos/frontend/src/pages/Overdrive.tsx:3058
+    - /Users/jkershaw/Documents/launchpad/demos/gateway/overdrive/swarm.py:1234
+    - /Users/jkershaw/Documents/launchpad/demos/gateway/overdrive/swarm.py:1457
+    - /Users/jkershaw/Documents/launchpad/demos/gateway/overdrive/swarm.py:1685
+  - name: Qwen2.5-7B
+    params_b: 7.0
+    hardware:
+    - gpu
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/tests/test_training_e2e.py:2411
+  - name: sentence-transformers/all-MiniLM-L6-v2
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/scripts/export-models.sh:986
+  - name: cross-encoder/ms-marco-MiniLM-L-6-v2
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/scripts/export-models.sh:1080
+  - name: distilbert-base-uncased-finetuned-sst-2-english
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/scripts/export-models.sh:1173
+  - name: ibm-granite/granite-3.0-2b-instruct
+    params_b: 2.0
+    hardware:
+    - cpu
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/gateway/router.py:57967
+  - name: codellama/CodeLlama-7b-Instruct-hf
+    params_b: 7.0
+    hardware:
+    - gpu
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/gateway/router.py:58047
+  - name: meta-llama/Llama-3.2-3B-Instruct
+    params_b: 3.0
+    hardware:
+    - cpu
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/gateway/router.py:58120
+    - /Users/jkershaw/Documents/launchpad/demos/quickstarts/rag/tests/integration/llamastack/conftest.py:402
+    - /Users/jkershaw/Documents/launchpad/demos/quickstarts/rag/tests/integration/llamastack/test_user_workflow.py:462
+    - /Users/jkershaw/Documents/launchpad/demos/quickstarts/vllm-tool-calling/vllm-tool-calling/llama3.2-3b/hpu/inferenceservice.yaml:2643
+    - /Users/jkershaw/Documents/launchpad/demos/quickstarts/vllm-tool-calling/vllm-tool-calling/llama3.2-3b/hpu/servingruntime.yaml:1933
+  - name: nomic-embed-text-v1-5
+    params_b: 0.14
+    hardware: &id009
+    - cpu
+    memory_gb: 1
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/gateway/router.py:18736
+    - /Users/jkershaw/Documents/launchpad/demos/gateway/router.py:19089
+    - /Users/jkershaw/Documents/launchpad/demos/gateway/router.py:19908
+    - /Users/jkershaw/Documents/launchpad/demos/gateway/router.py:20376
+    - /Users/jkershaw/Documents/launchpad/demos/gateway/router.py:21041
+  - name: meta-llama/Llama-Guard-3-8B
+    params_b: 8.0
+    hardware:
+    - gpu
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/quickstarts/rag/client-examples-python/register-shield.py:318
+  - name: all-MiniLM-L6-v2
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/quickstarts/rag/client-examples-python/rag-create-vector-db.py:797
+    - /Users/jkershaw/Documents/launchpad/demos/quickstarts/rag/tests/integration/test_upload_integration.py:3456
+    - /Users/jkershaw/Documents/launchpad/demos/quickstarts/rag/tests/integration/test_upload_integration.py:6875
+    - /Users/jkershaw/Documents/launchpad/demos/quickstarts/rag/tests/integration/test_upload_integration.py:7784
+    - /Users/jkershaw/Documents/launchpad/demos/quickstarts/rag/tests/integration/llamastack/conftest.py:4248
+  - name: microsoft/phi-2
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/deploy/gaudi-inference/inference-service.yaml:1088
+  - name: microsoft/Phi-3-mini-4k-instruct
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/deploy/gaudi-inference/inference-service.yaml:1131
+  - name: meta-llama/Llama-2-7b-chat-hf
+    params_b: 7.0
+    hardware:
+    - gpu
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/deploy/gaudi-inference/inference-service.yaml:1191
+  - name: llama3.2:3b-instruct-fp16
+    params_b: 3.0
+    hardware:
+    - cpu
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/quickstarts/rag/deploy/local/podman-compose.yml:743
+  - name: ibm-granite/granite-8b-code-instruct-4k
+    params_b: 8.0
+    hardware:
+    - gpu
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/quickstarts/vllm-tool-calling/vllm-tool-calling/granite3.2-8b/hpu/inferenceservice.yaml:2650
+    - /Users/jkershaw/Documents/launchpad/demos/quickstarts/vllm-tool-calling/vllm-tool-calling/granite3.2-8b/hpu/servingruntime.yaml:1927
+  - name: meta-llama/Llama-3.2-1B-Instruct
+    params_b: 1.0
+    hardware:
+    - cpu
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/launchpad/demos/quickstarts/vllm-tool-calling/vllm-tool-calling/llama3.2-1b/hpu/inferenceservice.yaml:2643
+    - /Users/jkershaw/Documents/launchpad/demos/quickstarts/vllm-tool-calling/vllm-tool-calling/llama3.2-1b/hpu/servingruntime.yaml:1933
+  agnosticv_overrides:
+    ocp4_workload_tenant_namespace_default_quota:
+      limits.cpu: '144'
+      requests.cpu: '72'
+      limits.memory: 72.125Gi
+      requests.memory: 36.0625Gi
+      requests.storage: 72.0Gi
+    ocp4_workload_litellm_virtual_keys_models:
+    - codellama-7b-instruct
+    - deepseek-r1-distill-qwen-14b
+    - granite-4-0-h-tiny
+    - granite-3-2-8b-instruct
+    - llama-scout-17b
+    - nomic-embed-text-v1-5
+    intel_rh_inference_local_cpu_backend: true
+- repo: /Users/jkershaw/Documents/liftoff
+  recommended_tier: dedicated
+  tier_reasoning: 1 models detected (1 CPU, 0 GPU). Local inference deployment detected.
+    Est. 8 CPU cores, 10.5GB memory.
+  resource_estimate:
+    cpu_cores: 8
+    memory_gb: 10.5
+    storage_gb: 20
+    gpu_count: 0
+    maas_rpm_estimate: 10
+    local_inference: true
+  models_detected:
+  - name: TinyLlama/TinyLlama-1.1B-Chat-v1.0
+    params_b: 1.1
+    hardware: *id007
+    memory_gb: 2.5
+    source: local
+    files:
+    - /Users/jkershaw/Documents/liftoff/agnosticv/ai-qs-intel-inference-dedicated/common.yaml:5126
+    - /Users/jkershaw/Documents/liftoff/agnosticv/ai-qs-intel-inference-dedicated/common.yaml:5119
+    - /Users/jkershaw/Documents/liftoff/ansible/collections/rhpds/intel_inference/roles/ocp4_workload_intel_cpu_inference/defaults/main.yml:275
+    - /Users/jkershaw/Documents/liftoff/ansible/collections/rhpds/intel_inference/roles/ocp4_workload_intel_cpu_inference/defaults/main.yml:268
+  agnosticv_overrides:
+    ocp4_workload_tenant_namespace_default_quota:
+      limits.cpu: '16'
+      requests.cpu: '8'
+      limits.memory: 32Gi
+      requests.memory: 16Gi
+      requests.storage: 20Gi
+    intel_rh_inference_local_cpu_backend: true
+- repo: /Users/jkershaw/Documents/platform-dashboard
+  recommended_tier: partner
+  tier_reasoning: '1 models detected (1 CPU, 1 GPU). Frameworks: vllm. Est. 4 CPU
+    cores, 8GB memory.'
+  resource_estimate:
+    cpu_cores: 4
+    memory_gb: 8
+    storage_gb: 20
+    gpu_count: 1
+    maas_rpm_estimate: 10
+    local_inference: false
+  models_detected:
+  - name: granite-3-2-8b-instruct
+    params_b: 8
+    hardware: *id005
+    memory_gb: 16
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/platform-dashboard/backend/orchestrator.py:18103
+    - /Users/jkershaw/Documents/platform-dashboard/backend/orchestrator.py:21510
+    - /Users/jkershaw/Documents/platform-dashboard/backend/orchestrator.py:40720
+    - /Users/jkershaw/Documents/platform-dashboard/backend/orchestrator.py:42950
+    - /Users/jkershaw/Documents/platform-dashboard/backend/main.py:6565
+  agnosticv_overrides:
+    ocp4_workload_tenant_namespace_default_quota:
+      limits.cpu: '16'
+      requests.cpu: '8'
+      limits.memory: 32Gi
+      requests.memory: 16Gi
+      requests.storage: 20Gi
+    ocp4_workload_litellm_virtual_keys_models:
+    - granite-3-2-8b-instruct
+- repo: /Users/jkershaw/Documents/red_hat_intel_partner_demo
+  recommended_tier: dedicated
+  tier_reasoning: '17 models detected (7 CPU, 7 GPU). Frameworks: torch, transformers,
+    vllm. Local inference deployment detected. Est. 48 CPU cores, 27.0625GB memory.'
+  resource_estimate:
+    cpu_cores: 48
+    memory_gb: 27.0625
+    storage_gb: 62.0
+    gpu_count: 1
+    maas_rpm_estimate: 50
+    local_inference: true
+  models_detected:
+  - name: TinyLlama/TinyLlama-1.1B-Chat-v1.0
+    params_b: 1.1
+    hardware: *id007
+    memory_gb: 2.5
+    source: local
+    files:
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/tools/inference-test-client/client.py:9860
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/tests/test_cpu_inference_local.py:467
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/tests/test_cpu_inference_local.py:2826
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/tests/test_cpu_inference_local.py:3511
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/tests/test_cpu_inference_local.py:4307
+  - name: codellama-7b-instruct
+    params_b: 7
+    hardware: *id003
+    memory_gb: 14
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/frontend/dist/assets/index-Dct7LE9e.js:780266
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/frontend/src/components/BuildYourOwn.tsx:1028
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/frontend/src/components/BuildYourOwn.tsx:1390
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/frontend/src/components/BuildYourOwn.tsx:3716
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/frontend/src/components/BuildYourOwn.tsx:1021
+  - name: deepseek-r1-distill-qwen-14b
+    params_b: 14
+    hardware: *id001
+    memory_gb: 28
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/frontend/src/components/BuildYourOwn.tsx:1154
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/frontend/src/components/BuildYourOwn.tsx:1147
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/frontend/src/components/LiveWorkflow.tsx:19148
+  - name: granite-4-0-h-tiny
+    params_b: 1
+    hardware: *id008
+    memory_gb: 2
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/frontend/src/components/BuildYourOwn.tsx:963
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/frontend/src/pages/Overdrive.tsx:2222
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/gateway/overdrive/swarm.py:772
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/gateway/overdrive/swarm.py:2215
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/gateway/overdrive/swarm.py:4218
+  - name: granite-3-2-8b-instruct
+    params_b: 8
+    hardware: *id005
+    memory_gb: 16
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/frontend/src/components/BuildYourOwn.tsx:1082
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/gateway/overdrive/research_agent.py:9084
+  - name: llama-scout-17b
+    params_b: 17
+    hardware: *id006
+    memory_gb: 34
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/frontend/src/components/BuildYourOwn.tsx:1217
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/frontend/src/pages/Overdrive.tsx:3058
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/gateway/overdrive/swarm.py:1234
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/gateway/overdrive/swarm.py:1457
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/gateway/overdrive/swarm.py:1685
+  - name: Qwen2.5-7B
+    params_b: 7.0
+    hardware:
+    - gpu
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/tests/test_training_e2e.py:2411
+  - name: sentence-transformers/all-MiniLM-L6-v2
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/scripts/export-models.sh:986
+  - name: cross-encoder/ms-marco-MiniLM-L-6-v2
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/scripts/export-models.sh:1080
+  - name: distilbert-base-uncased-finetuned-sst-2-english
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/scripts/export-models.sh:1173
+  - name: ibm-granite/granite-3.0-2b-instruct
+    params_b: 2.0
+    hardware:
+    - cpu
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/gateway/router.py:58843
+  - name: codellama/CodeLlama-7b-Instruct-hf
+    params_b: 7.0
+    hardware:
+    - gpu
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/gateway/router.py:58923
+  - name: meta-llama/Llama-3.2-3B-Instruct
+    params_b: 3.0
+    hardware:
+    - cpu
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/gateway/router.py:58996
+  - name: nomic-embed-text-v1-5
+    params_b: 0.14
+    hardware: *id009
+    memory_gb: 1
+    source: maas
+    files:
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/gateway/router.py:19516
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/gateway/router.py:19869
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/gateway/router.py:20688
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/gateway/router.py:21156
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/gateway/router.py:21821
+  - name: microsoft/phi-2
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/deploy/gaudi-inference/inference-service.yaml:1088
+  - name: microsoft/Phi-3-mini-4k-instruct
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/deploy/gaudi-inference/inference-service.yaml:1131
+  - name: meta-llama/Llama-2-7b-chat-hf
+    params_b: 7.0
+    hardware:
+    - gpu
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/red_hat_intel_partner_demo/deploy/gaudi-inference/inference-service.yaml:1191
+  agnosticv_overrides:
+    ocp4_workload_tenant_namespace_default_quota:
+      limits.cpu: '96'
+      requests.cpu: '48'
+      limits.memory: 54.125Gi
+      requests.memory: 27.0625Gi
+      requests.storage: 62.0Gi
+    ocp4_workload_litellm_virtual_keys_models:
+    - codellama-7b-instruct
+    - deepseek-r1-distill-qwen-14b
+    - granite-4-0-h-tiny
+    - granite-3-2-8b-instruct
+    - llama-scout-17b
+    - nomic-embed-text-v1-5
+    intel_rh_inference_local_cpu_backend: true
+- repo: /Users/jkershaw/Documents/red_hat_start
+  recommended_tier: pilot
+  tier_reasoning: No local inference or heavy compute detected. MAAS API key is sufficient.
+  resource_estimate:
+    cpu_cores: 4
+    memory_gb: 8
+    storage_gb: 20
+    gpu_count: 0
+    maas_rpm_estimate: 10
+    local_inference: false
+  models_detected: []
+  agnosticv_overrides: {}
+- repo: /Users/jkershaw/Documents/rhdp-ops-tools
+  recommended_tier: pilot
+  tier_reasoning: No local inference or heavy compute detected. MAAS API key is sufficient.
+  resource_estimate:
+    cpu_cores: 4
+    memory_gb: 8
+    storage_gb: 20
+    gpu_count: 0
+    maas_rpm_estimate: 10
+    local_inference: false
+  models_detected: []
+  agnosticv_overrides: {}
+- repo: /Users/jkershaw/Documents/sandbox-api-configs
+  recommended_tier: pilot
+  tier_reasoning: No local inference or heavy compute detected. MAAS API key is sufficient.
+  resource_estimate:
+    cpu_cores: 4
+    memory_gb: 8
+    storage_gb: 20
+    gpu_count: 0
+    maas_rpm_estimate: 10
+    local_inference: false
+  models_detected: []
+  agnosticv_overrides: {}
+- repo: /Users/jkershaw/Documents/stargate-mock-cluster
+  recommended_tier: pilot
+  tier_reasoning: No local inference or heavy compute detected. MAAS API key is sufficient.
+  resource_estimate:
+    cpu_cores: 4
+    memory_gb: 8
+    storage_gb: 20
+    gpu_count: 0
+    maas_rpm_estimate: 10
+    local_inference: false
+  models_detected: []
+  agnosticv_overrides: {}
+- repo: /Users/jkershaw/Documents/stargate-platform
+  recommended_tier: pilot
+  tier_reasoning: No local inference or heavy compute detected. MAAS API key is sufficient.
+  resource_estimate:
+    cpu_cores: 4
+    memory_gb: 8
+    storage_gb: 20
+    gpu_count: 0
+    maas_rpm_estimate: 10
+    local_inference: false
+  models_detected: []
+  agnosticv_overrides: {}
+- repo: /Users/jkershaw/Documents/stargate-synthetic-client-emulator
+  recommended_tier: pilot
+  tier_reasoning: No local inference or heavy compute detected. MAAS API key is sufficient.
+  resource_estimate:
+    cpu_cores: 4
+    memory_gb: 8
+    storage_gb: 20
+    gpu_count: 0
+    maas_rpm_estimate: 10
+    local_inference: false
+  models_detected: []
+  agnosticv_overrides: {}
+- repo: /Users/jkershaw/Documents/tarsy-compare
+  recommended_tier: dedicated
+  tier_reasoning: '6 models detected (0 CPU, 0 GPU). Frameworks: langchain, openai.
+    Local inference deployment detected. Est. 28 CPU cores, 8GB memory.'
+  resource_estimate:
+    cpu_cores: 28
+    memory_gb: 8
+    storage_gb: 20
+    gpu_count: 0
+    maas_rpm_estimate: 10
+    local_inference: true
+  models_detected:
+  - name: gemini-2.0-flash
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/tarsy-compare/web/dashboard/src/test/utils/traceHelpers.test.ts:16376
+  - name: gemini-2.5-pro
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/tarsy-compare/llm-service/tests/test_servicer.py:1763
+    - /Users/jkershaw/Documents/tarsy-compare/llm-service/tests/test_servicer.py:4714
+    - /Users/jkershaw/Documents/tarsy-compare/llm-service/tests/test_servicer.py:5695
+    - /Users/jkershaw/Documents/tarsy-compare/llm-service/tests/test_servicer.py:6924
+    - /Users/jkershaw/Documents/tarsy-compare/llm-service/tests/test_google_native.py:21685
+  - name: gemini-3.1-flash-image-preview
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/tarsy-compare/llm-service/tests/test_google_native.py:9103
+  - name: gemini-3.1-pro-preview
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/tarsy-compare/llm-service/tests/test_google_native.py:9795
+  - name: o4-mini
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/tarsy-compare/llm-service/tests/test_langchain_provider.py:7903
+    - /Users/jkershaw/Documents/tarsy-compare/llm-service/tests/test_langchain_provider.py:8419
+    - /Users/jkershaw/Documents/tarsy-compare/llm-service/tests/test_langchain_provider.py:9468
+    - /Users/jkershaw/Documents/tarsy-compare/llm-service/tests/test_langchain_provider.py:21836
+    - /Users/jkershaw/Documents/tarsy-compare/llm-service/tests/test_langchain_provider.py:23116
+  - name: claude-sonnet-4-5-20250929
+    params_b: 0
+    hardware:
+    - unknown
+    memory_gb: 0
+    source: local
+    files:
+    - /Users/jkershaw/Documents/tarsy-compare/llm-service/tests/test_langchain_provider.py:8728
+  agnosticv_overrides:
+    ocp4_workload_tenant_namespace_default_quota:
+      limits.cpu: '56'
+      requests.cpu: '28'
+      limits.memory: 32Gi
+      requests.memory: 16Gi
+      requests.storage: 20Gi
+    intel_rh_inference_local_cpu_backend: true
+- repo: /Users/jkershaw/Documents/tarsy-kafka-adapter
+  recommended_tier: pilot
+  tier_reasoning: No local inference or heavy compute detected. MAAS API key is sufficient.
+  resource_estimate:
+    cpu_cores: 4
+    memory_gb: 8
+    storage_gb: 20
+    gpu_count: 0
+    maas_rpm_estimate: 10
+    local_inference: false
+  models_detected: []
+  agnosticv_overrides: {}
