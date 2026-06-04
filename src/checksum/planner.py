@@ -30,6 +30,7 @@ def recommend_tier(scan_results: dict) -> dict:
     estimate = scan_results.get("resource_estimate", {})
     models = scan_results.get("models_detected", [])
     frameworks = scan_results.get("frameworks_detected", [])
+    infra = scan_results.get("infrastructure", {})
 
     needs_local = estimate.get("local_inference", False)
     needs_gateway = _needs_gateway(scan_results)
@@ -46,10 +47,15 @@ def recommend_tier(scan_results: dict) -> dict:
         tier = "pilot"
         reasoning = "No local inference or heavy compute detected. MAAS API key is sufficient."
 
+    topology = infra.get("topology", "namespace") if infra else "namespace"
+    infra_summary = _build_infra_summary(infra) if infra else {}
+
     return {
         "repo": scan_results.get("repo", ""),
         "recommended_tier": tier,
         "tier_reasoning": reasoning,
+        "deployment_topology": topology,
+        "infrastructure": infra_summary,
         "resource_estimate": estimate,
         "models_detected": models,
         "agnosticv_overrides": _generate_overrides(tier, estimate, models),
@@ -103,3 +109,36 @@ def _generate_overrides(tier: str, estimate: dict, models: list) -> dict:
         overrides["intel_rh_inference_local_cpu_backend"] = True
 
     return overrides
+
+
+def _build_infra_summary(infra: dict) -> dict:
+    """Build a concise infrastructure summary for the plan output."""
+    summary = {}
+
+    containers = infra.get("containers", {})
+    if containers.get("containerfiles", 0) > 0:
+        summary["container_images"] = containers["containerfiles"]
+
+    dbs = infra.get("databases", [])
+    if dbs:
+        summary["databases"] = dbs
+
+    mqs = infra.get("message_queues", [])
+    if mqs:
+        summary["message_queues"] = mqs
+
+    vms = infra.get("vms", {})
+    if vms.get("needs_cnv"):
+        summary["cnv_vms"] = vms["vm_count"]
+
+    k8s = infra.get("k8s_workloads", {})
+    if k8s.get("total_workloads", 0) > 0:
+        summary["k8s_workloads"] = k8s["total_workloads"]
+        summary["k8s_services"] = k8s.get("services", 0)
+        summary["k8s_pvcs"] = k8s.get("pvcs", 0)
+
+    frontends = infra.get("frontends", 0)
+    if frontends > 0:
+        summary["frontends"] = frontends
+
+    return summary

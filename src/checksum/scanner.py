@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .detectors import llm_imports, model_names, k8s_manifests, concurrency
+from .detectors import llm_imports, model_names, k8s_manifests, concurrency, infrastructure
 from .catalog import lookup_models
 
 
@@ -20,6 +20,7 @@ def scan_repo(repo_path: Path) -> dict:
     models = lookup_models(raw_models)
     k8s_resources = k8s_manifests.detect(config_files)
     concurrency_info = concurrency.detect(source_files)
+    infra = infrastructure.detect(source_files, config_files)
 
     return {
         "repo": str(repo_path),
@@ -28,6 +29,7 @@ def scan_repo(repo_path: Path) -> dict:
         "models_detected": models,
         "k8s_resources": k8s_resources,
         "concurrency": concurrency_info,
+        "infrastructure": infra,
         "resource_estimate": _estimate_resources(models, k8s_resources, concurrency_info),
     }
 
