@@ -37,10 +37,11 @@ def scan(repo_path: Path, fmt: str):
 @main.command()
 @click.argument("repo_path", type=click.Path(exists=True, path_type=Path))
 @click.option("--output", "-o", type=click.Path(path_type=Path), default=None)
-def plan(repo_path: Path, output: Path | None):
+@click.option("--seats", type=int, default=1, help="Number of concurrent seats/users for lab capacity planning")
+def plan(repo_path: Path, output: Path | None, seats: int):
     """Generate a capacity plan with tier recommendation."""
     results = scan_repo(repo_path)
-    capacity_plan = recommend_tier(results)
+    capacity_plan = recommend_tier(results, seats=seats)
     if output:
         write_plan(capacity_plan, output)
         click.echo(f"Plan written to {output}")

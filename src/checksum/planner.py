@@ -25,7 +25,22 @@ TIER_THRESHOLDS = {
 }
 
 
-def recommend_tier(scan_results: dict) -> dict:
+SHARED_INFRA_OVERHEAD = {
+    "cpu": 8,
+    "memory_gb": 32,
+    "description": "Keycloak + OpenShift AI + ArgoCD + console embed",
+}
+
+WORKER_SIZES = [
+    {"cores": 16, "memory_gb": 64},
+    {"cores": 32, "memory_gb": 128},
+    {"cores": 64, "memory_gb": 256},
+    {"cores": 96, "memory_gb": 384},
+    {"cores": 128, "memory_gb": 512},
+]
+
+
+def recommend_tier(scan_results: dict, seats: int = 1) -> dict:
     """Recommend an RHDP provisioning tier based on scan results."""
     estimate = scan_results.get("resource_estimate", {})
     models = scan_results.get("models_detected", [])
@@ -50,16 +65,88 @@ def recommend_tier(scan_results: dict) -> dict:
     topology = infra.get("topology", "namespace") if infra else "namespace"
     infra_summary = _build_infra_summary(infra) if infra else {}
 
-    return {
+    result = {
         "repo": scan_results.get("repo", ""),
         "recommended_tier": tier,
         "tier_reasoning": reasoning,
         "deployment_topology": topology,
         "infrastructure": infra_summary,
+        "per_seat": {
+            "cpu_cores": cpu_cores,
+            "memory_gb": memory_gb,
+            "storage_gb": estimate.get("storage_gb", 20),
+        },
         "resource_estimate": estimate,
         "models_detected": models,
         "agnosticv_overrides": _generate_overrides(tier, estimate, models),
     }
+
+    if seats > 1:
+        result["lab_capacity"] = _plan_lab_capacity(estimate, seats)
+
+    return result
+
+
+def _plan_lab_capacity(per_seat: dict, seats: int) -> dict:
+    """Calculate total cluster resources for a multi-seat lab."""
+    seat_cpu = per_seat.get("cpu_cores", 4)
+    seat_mem = per_seat.get("memory_gb", 8)
+    seat_storage = per_seat.get("storage_gb", 20)
+
+    total_cpu = (seat_cpu * seats) + SHARED_INFRA_OVERHEAD["cpu"]
+    total_mem = (seat_mem * seats) + SHARED_INFRA_OVERHEAD["memory_gb"]
+    total_storage = seat_storage * seats
+
+    maas_rpm = per_seat.get("maas_rpm_estimate", 10) * seats
+
+    worker_size = _pick_worker_size(total_cpu, total_mem)
+    worker_count = max(
+        _ceil_div(total_cpu, worker_size["cores"]),
+        _ceil_div(total_mem, worker_size["memory_gb"]),
+    )
+    worker_count = max(worker_count, 2)
+
+    return {
+        "seats": seats,
+        "total_cpu": total_cpu,
+        "total_memory_gb": total_mem,
+        "total_storage_gb": total_storage,
+        "shared_infra_overhead": SHARED_INFRA_OVERHEAD["description"],
+        "maas_rpm_total": maas_rpm,
+        "cluster_sizing": {
+            "worker_count": worker_count,
+            "worker_cores": worker_size["cores"],
+            "worker_memory_gb": worker_size["memory_gb"],
+            "total_cluster_cpu": worker_count * worker_size["cores"],
+            "total_cluster_memory_gb": worker_count * worker_size["memory_gb"],
+        },
+        "sandbox_config": {
+            "max_placements": seats,
+            "max_cpu_usage_percentage": 100,
+            "max_memory_usage_percentage": 80,
+        },
+        "agnosticv_cluster_overrides": {
+            "worker_instance_count": worker_count,
+            "ai_workers_cores": worker_size["cores"],
+            "ai_workers_memory": f"{worker_size['memory_gb']}Gi",
+        },
+    }
+
+
+def _pick_worker_size(total_cpu: float, total_mem: float) -> dict:
+    """Pick the smallest worker size that keeps count reasonable."""
+    for size in WORKER_SIZES:
+        count = max(
+            _ceil_div(total_cpu, size["cores"]),
+            _ceil_div(total_mem, size["memory_gb"]),
+        )
+        if count <= 8:
+            return size
+    return WORKER_SIZES[-1]
+
+
+def _ceil_div(a: float, b: float) -> int:
+    return int(-(-a // b))
 
 
 def _needs_gateway(scan_results: dict) -> bool:
