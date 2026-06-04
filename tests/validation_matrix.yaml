@@ -1,5 +1,9 @@
 # CheckSum Capacity Scanner — Validation Matrix
+# 90% pass threshold per stage
 
+# =============================================================================
+# Stage 1: Package Structure
+# =============================================================================
 stage_1_package_structure:
   package:
     pyproject_toml:
@@ -7,7 +11,7 @@ stage_1_package_structure:
       points: 5
       required: true
     cli_commands:
-      description: "CLI has scan, plan, validate commands"
+      description: "CLI has scan, plan, validate, batch commands"
       points: 10
       required: true
     module_imports:
@@ -19,10 +23,11 @@ stage_1_package_structure:
       points: 5
       required: true
 
-# Stage 1 Passing Threshold: 90% of total points
-
+# =============================================================================
+# Stage 2: Scanner & Detectors
+# =============================================================================
 stage_2_scanner:
-  detection:
+  llm_detection:
     detects_frameworks:
       description: "Detects openai, litellm, transformers, vllm, langchain, torch, openvino"
       points: 10
@@ -31,9 +36,9 @@ stage_2_scanner:
       description: "Extracts model names from code and config"
       points: 10
       required: true
-    parses_k8s:
-      description: "Parses K8s manifest resource requests"
-      points: 5
+    rejects_false_positives:
+      description: "Filters URL paths, shell vars, test fixtures, code snippets"
+      points: 10
       required: true
     detects_concurrency:
       description: "Detects ThreadPoolExecutor, asyncio, batch_size"
@@ -41,20 +46,34 @@ stage_2_scanner:
       required: true
   catalog:
     maas_models_known:
-      description: "Built-in catalog includes all MAAS models"
+      description: "Built-in catalog includes all MAAS models with params and hardware"
       points: 10
       required: true
     model_enrichment:
-      description: "Raw detections enriched with params_b, hardware"
+      description: "Raw detections enriched with params_b, hardware, source"
+      points: 5
+      required: true
+  k8s_parsing:
+    parses_cpu:
+      description: "Parses CPU values: millicores, whole cores, fractional"
+      points: 5
+      required: true
+    parses_memory:
+      description: "Parses memory: Gi, Mi, Ti, G, bare numbers"
+      points: 5
+      required: true
+    parses_storage:
+      description: "Parses PVC storage requests"
       points: 5
       required: true
 
-# Stage 2 Passing Threshold: 90% of total points
-
+# =============================================================================
+# Stage 3: Planner & Tier Recommendations
+# =============================================================================
 stage_3_planner:
   tier_recommendations:
     recommends_pilot:
-      description: "Empty repos recommend pilot"
+      description: "Empty/non-LLM repos recommend pilot"
       points: 10
       required: true
     recommends_partner:
@@ -69,6 +88,162 @@ stage_3_planner:
       description: "Generates agnosticv variable overrides"
       points: 5
       required: true
+  concurrency:
+    cpu_decoupled:
+      description: "Async workers don't map 1:1 to CPU cores"
+      points: 5
+      required: true
 
-# Stage 3 Passing Threshold: 90% of total points
+# =============================================================================
+# Stage 4: Infrastructure Detection
+# =============================================================================
+stage_4_infrastructure:
+  detection:
+    detects_containers:
+      description: "Counts Containerfiles and container image references"
+      points: 5
+      required: true
+    detects_databases:
+      description: "Detects PostgreSQL, Redis, MongoDB, MySQL, SQLite, Elasticsearch"
+      points: 10
+      required: true
+    detects_message_queues:
+      description: "Detects Kafka, RabbitMQ, NATS, Celery, Pulsar"
+      points: 10
+      required: true
+    detects_vms:
+      description: "Detects VirtualMachine resources and kubevirt.io references"
+      points: 5
+      required: true
+    detects_k8s_workloads:
+      description: "Counts Deployments, StatefulSets, Jobs, Services, PVCs"
+      points: 10
+      required: true
+    detects_frontends:
+      description: "Counts React/Vue/Angular/PatternFly frontends"
+      points: 5
+      required: true
+  filtering:
+    excludes_fixtures:
+      description: "Excludes fixtures/, mocks/, testdata/ from infrastructure counts"
+      points: 10
+      required: true
+    no_cnv_false_positives:
+      description: "CNV detection requires kubevirt.io or VirtualMachine, not substring 'cnv'"
+      points: 5
+      required: true
+  topology:
+    classifies_namespace:
+      description: "Simple apps (<=15 workloads, no MQ) classified as namespace"
+      points: 5
+      required: true
+    classifies_platform:
+      description: "Complex apps (>15 workloads or MQ) classified as platform"
+      points: 5
+      required: true
+    classifies_cnv:
+      description: "VM-based apps classified as cnv"
+      points: 5
+      required: true
+
+# =============================================================================
+# Stage 5: Helm Chart Parsing
+# =============================================================================
+stage_5_helm:
+  chart_detection:
+    finds_charts:
+      description: "Locates Chart.yaml in repo"
+      points: 5
+      required: true
+    parses_values:
+      description: "Extracts resource requests from values.yaml"
+      points: 10
+      required: true
+    parses_templates:
+      description: "Extracts resource specs from Helm templates"
+      points: 5
+      required: false
+    detects_deploy_method:
+      description: "Detects helm-via-make deploy pattern"
+      points: 5
+      required: true
+
+# =============================================================================
+# Stage 6: Lab Capacity Planning
+# =============================================================================
+stage_6_lab_capacity:
+  scaling:
+    per_seat_estimate:
+      description: "Plan output includes per_seat resource breakdown"
+      points: 10
+      required: true
+    lab_total:
+      description: "Multiplies per-seat by seats + shared infra overhead"
+      points: 10
+      required: true
+    cluster_sizing:
+      description: "Recommends worker count and size"
+      points: 10
+      required: true
+    sandbox_config:
+      description: "Generates max_placements and usage percentages"
+      points: 5
+      required: true
+    agnosticv_cluster_overrides:
+      description: "Generates worker_instance_count, ai_workers_cores, ai_workers_memory"
+      points: 5
+      required: true
+  warnings:
+    maas_rpm_limit:
+      description: "Warns when total RPM exceeds MAAS 90 RPM limit"
+      points: 10
+      required: true
+    gpu_sharing:
+      description: "Warns when >10 seats share GPU models"
+      points: 5
+      required: true
+
+# =============================================================================
+# Stage 7: AgnosticV Generation
+# =============================================================================
+stage_7_agnosticv_generation:
+  output:
+    generates_common_yaml:
+      description: "Produces common.yaml with includes, workloads, quotas, meta"
+      points: 15
+      required: true
+    generates_stage_files:
+      description: "Produces dev.yaml, test.yaml, prod.yaml with sandbox selectors"
+      points: 10
+      required: true
+    right_sized_quotas:
+      description: "Quotas match scan results, not blanket defaults"
+      points: 10
+      required: true
+    maas_models_populated:
+      description: "LiteLLM model list populated from detected MAAS models"
+      points: 5
+      required: true
+    helm_make_params:
+      description: "Includes quickstart_deploy_via_make config when Helm detected"
+      points: 5
+      required: true
+  validation:
+    tier_extraction:
+      description: "Validator extracts tier from workloads or explicit var"
+      points: 5
+      required: true
+    quota_parsing:
+      description: "Validator parses CPU, memory, storage from agnosticv quota"
+      points: 5
+      required: true
+    model_coverage:
+      description: "Validator compares recommended vs provisioned model lists"
+      points: 5
+      required: true
+    jinja_safe_loading:
+      description: "Validator loads YAML with Jinja2 expressions safely"
+      points: 5
+      required: true
+
 # All stages passing threshold: 90% of total points
