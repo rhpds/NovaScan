@@ -1,5 +1,7 @@
 """Capacity planning and tier recommendation."""
 
+from __future__ import annotations
+
 
 TIER_THRESHOLDS = {
     "pilot": {

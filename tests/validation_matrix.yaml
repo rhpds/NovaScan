@@ -1,0 +1,74 @@
+# CheckSum Capacity Scanner — Validation Matrix
+
+stage_1_package_structure:
+  package:
+    pyproject_toml:
+      description: "pyproject.toml with CLI entry point and dependencies"
+      points: 5
+      required: true
+    cli_commands:
+      description: "CLI has scan, plan, validate commands"
+      points: 10
+      required: true
+    module_imports:
+      description: "All source modules import without errors"
+      points: 10
+      required: true
+    python_compat:
+      description: "All modules use from __future__ import annotations"
+      points: 5
+      required: true
+
+# Stage 1 Passing Threshold: 90% of total points
+
+stage_2_scanner:
+  detection:
+    detects_frameworks:
+      description: "Detects openai, litellm, transformers, vllm, langchain, torch, openvino"
+      points: 10
+      required: true
+    detects_models:
+      description: "Extracts model names from code and config"
+      points: 10
+      required: true
+    parses_k8s:
+      description: "Parses K8s manifest resource requests"
+      points: 5
+      required: true
+    detects_concurrency:
+      description: "Detects ThreadPoolExecutor, asyncio, batch_size"
+      points: 5
+      required: true
+  catalog:
+    maas_models_known:
+      description: "Built-in catalog includes all MAAS models"
+      points: 10
+      required: true
+    model_enrichment:
+      description: "Raw detections enriched with params_b, hardware"
+      points: 5
+      required: true
+
+# Stage 2 Passing Threshold: 90% of total points
+
+stage_3_planner:
+  tier_recommendations:
+    recommends_pilot:
+      description: "Empty repos recommend pilot"
+      points: 10
+      required: true
+    recommends_partner:
+      description: "MAAS-using repos recommend partner"
+      points: 10
+      required: true
+    recommends_dedicated:
+      description: "Local inference repos recommend dedicated"
+      points: 10
+      required: true
+    generates_overrides:
+      description: "Generates agnosticv variable overrides"
+      points: 5
+      required: true
+
+# Stage 3 Passing Threshold: 90% of total points
+# All stages passing threshold: 90% of total points
