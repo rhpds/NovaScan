@@ -84,6 +84,10 @@ def recommend_tier(scan_results: dict, seats: int = 1) -> dict:
     if seats > 1:
         result["lab_capacity"] = _plan_lab_capacity(estimate, seats)
 
+    warnings = _check_warnings(estimate, seats)
+    if warnings:
+        result["warnings"] = warnings
+
     return result
 
 
@@ -147,6 +151,31 @@ def _pick_worker_size(total_cpu: float, total_mem: float) -> dict:
 
 def _ceil_div(a: float, b: float) -> int:
     return int(-(-a // b))
+
+
+MAAS_RPM_LIMIT = 90
+
+
+def _check_warnings(estimate: dict, seats: int) -> list[str]:
+    """Check for provisioning warnings."""
+    warnings = []
+    rpm = estimate.get("maas_rpm_estimate", 0)
+    total_rpm = rpm * seats
+
+    if total_rpm > MAAS_RPM_LIMIT:
+        warnings.append(
+            f"MAAS rate limit risk: {total_rpm} RPM estimated across {seats} seats "
+            f"exceeds MAAS limit of {MAAS_RPM_LIMIT} RPM. Consider dedicated inference pods "
+            f"or request a higher MAAS quota."
+        )
+
+    if estimate.get("gpu_count", 0) > 0 and seats > 10:
+        warnings.append(
+            f"GPU sharing: {seats} seats sharing GPU-class models via MAAS. "
+            f"Expect increased latency at peak concurrency."
+        )
+
+    return warnings
 
 
 def _needs_gateway(scan_results: dict) -> bool:

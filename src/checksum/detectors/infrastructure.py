@@ -21,6 +21,8 @@ def _filter_fixtures(files: list[Path]) -> list[Path]:
 
 def detect(source_files: list[Path], config_files: list[Path]) -> dict:
     """Scan for application infrastructure components."""
+    from .helm import detect as detect_helm
+
     deploy_sources = _filter_fixtures(source_files)
     deploy_configs = _filter_fixtures(config_files)
 
@@ -31,6 +33,7 @@ def detect(source_files: list[Path], config_files: list[Path]) -> dict:
     k8s_workloads = _detect_k8s_workloads(deploy_configs)
     frontends = _detect_frontends(deploy_sources, deploy_configs)
     compose = _detect_compose(deploy_configs)
+    helm = detect_helm(deploy_sources, deploy_configs)
 
     return {
         "containers": containers,
@@ -40,6 +43,7 @@ def detect(source_files: list[Path], config_files: list[Path]) -> dict:
         "k8s_workloads": k8s_workloads,
         "frontends": frontends,
         "compose_files": compose,
+        "helm": helm,
         "topology": _classify_topology(
             containers, databases, message_queues, vms, k8s_workloads, frontends
         ),

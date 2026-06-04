@@ -30,7 +30,7 @@ def scan_repo(repo_path: Path) -> dict:
         "k8s_resources": k8s_resources,
         "concurrency": concurrency_info,
         "infrastructure": infra,
-        "resource_estimate": _estimate_resources(models, k8s_resources, concurrency_info),
+        "resource_estimate": _estimate_resources(models, k8s_resources, concurrency_info, infra),
     }
 
 
@@ -58,7 +58,9 @@ def _collect_config_files(repo_path: Path) -> list[Path]:
     return files
 
 
-def _estimate_resources(models: list, k8s_resources: dict, concurrency_info: dict) -> dict:
+def _estimate_resources(
+    models: list, k8s_resources: dict, concurrency_info: dict, infra: dict | None = None
+) -> dict:
     """Estimate total resource requirements."""
     cpu_cores = 4
     memory_gb = 8
@@ -80,8 +82,17 @@ def _estimate_resources(models: list, k8s_resources: dict, concurrency_info: dic
     if k8s_resources.get("total_storage_gb"):
         storage_gb = max(storage_gb, k8s_resources["total_storage_gb"])
 
+    if infra:
+        helm = infra.get("helm", {})
+        if helm.get("total_cpu_request", 0) > 0:
+            cpu_cores = max(cpu_cores, helm["total_cpu_request"])
+        if helm.get("total_memory_gb", 0) > 0:
+            memory_gb = max(memory_gb, helm["total_memory_gb"])
+        if helm.get("total_storage_gb", 0) > 0:
+            storage_gb = max(storage_gb, helm["total_storage_gb"])
+
     max_concurrent = concurrency_info.get("max_concurrent", 1)
-    maas_rpm = max_concurrent * 10
+    maas_rpm = min(max_concurrent, 10) * 10
 
     return {
         "cpu_cores": cpu_cores,

@@ -38,11 +38,22 @@ def scan(repo_path: Path, fmt: str):
 @click.argument("repo_path", type=click.Path(exists=True, path_type=Path))
 @click.option("--output", "-o", type=click.Path(path_type=Path), default=None)
 @click.option("--seats", type=int, default=1, help="Number of concurrent seats/users for lab capacity planning")
-def plan(repo_path: Path, output: Path | None, seats: int):
+@click.option("--generate-agnosticv", "agnosticv_dir", type=click.Path(path_type=Path), default=None,
+              help="Generate a complete agnosticv catalog item directory")
+@click.option("--repo-url", default="", help="Git URL for the demo repo (used in quickstart_deploy_via_make)")
+def plan(repo_path: Path, output: Path | None, seats: int, agnosticv_dir: Path | None, repo_url: str):
     """Generate a capacity plan with tier recommendation."""
     results = scan_repo(repo_path)
     capacity_plan = recommend_tier(results, seats=seats)
-    if output:
+
+    if agnosticv_dir:
+        from .generator import generate_agnosticv, write_agnosticv
+        config = generate_agnosticv(capacity_plan, seats=seats, repo_url=repo_url)
+        write_agnosticv(config, agnosticv_dir)
+        click.echo(f"AgnosticV catalog item written to {agnosticv_dir}/")
+        click.echo(f"  common.yaml, dev.yaml, test.yaml, prod.yaml")
+        click.echo(f"  Review and adjust before committing.")
+    elif output:
         write_plan(capacity_plan, output)
         click.echo(f"Plan written to {output}")
     else:
