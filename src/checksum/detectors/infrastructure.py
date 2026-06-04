@@ -7,16 +7,30 @@ from pathlib import Path
 
 import yaml
 
+FIXTURE_DIRS = {"fixtures", "mocks", "testdata", "test_data", "mock_data", "__mocks__"}
+
+
+def _is_fixture(path: Path) -> bool:
+    parts = set(p.lower() for p in path.parts)
+    return bool(parts & FIXTURE_DIRS)
+
+
+def _filter_fixtures(files: list[Path]) -> list[Path]:
+    return [f for f in files if not _is_fixture(f)]
+
 
 def detect(source_files: list[Path], config_files: list[Path]) -> dict:
     """Scan for application infrastructure components."""
-    containers = _detect_containers(source_files, config_files)
-    databases = _detect_databases(source_files, config_files)
-    message_queues = _detect_message_queues(source_files, config_files)
-    vms = _detect_vms(config_files)
-    k8s_workloads = _detect_k8s_workloads(config_files)
-    frontends = _detect_frontends(source_files, config_files)
-    compose = _detect_compose(config_files)
+    deploy_sources = _filter_fixtures(source_files)
+    deploy_configs = _filter_fixtures(config_files)
+
+    containers = _detect_containers(deploy_sources, deploy_configs)
+    databases = _detect_databases(deploy_sources, deploy_configs)
+    message_queues = _detect_message_queues(deploy_sources, deploy_configs)
+    vms = _detect_vms(deploy_configs)
+    k8s_workloads = _detect_k8s_workloads(deploy_configs)
+    frontends = _detect_frontends(deploy_sources, deploy_configs)
+    compose = _detect_compose(deploy_configs)
 
     return {
         "containers": containers,
@@ -113,7 +127,7 @@ def _detect_message_queues(source_files: list[Path], config_files: list[Path]) -
 
 def _detect_vms(config_files: list[Path]) -> dict:
     vm_count = 0
-    cnv_refs = 0
+    kubevirt_refs = 0
     for f in config_files:
         if f.suffix not in {".yaml", ".yml", ".json"}:
             continue
@@ -125,13 +139,13 @@ def _detect_vms(config_files: list[Path]) -> dict:
             vm_count += content.count("kind: VirtualMachine")
             vm_count += content.count('"kind": "VirtualMachine"')
             vm_count += content.count('"kind":"VirtualMachine"')
-        if "kubevirt" in content.lower() or "cnv" in content.lower():
-            cnv_refs += 1
+        if "kubevirt.io" in content or "VirtualMachineInstance" in content:
+            kubevirt_refs += 1
 
     return {
         "vm_count": vm_count,
-        "cnv_references": cnv_refs,
-        "needs_cnv": vm_count > 0 or cnv_refs > 5,
+        "kubevirt_references": kubevirt_refs,
+        "needs_cnv": vm_count > 0,
     }
 
 
