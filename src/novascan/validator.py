@@ -1,4 +1,4 @@
-"""Validate checksum recommendations against existing agnosticv configs."""
+"""Validate novascan recommendations against existing agnosticv configs."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ import yaml
 
 
 def compare_against_agnosticv(capacity_plan: dict, agnosticv_path: Path) -> dict:
-    """Compare a checksum capacity plan against an agnosticv config file."""
+    """Compare a novascan capacity plan against an agnosticv config file."""
     agnosticv_path = Path(agnosticv_path)
     agnosticv = _load_agnosticv(agnosticv_path)
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tests for MAAS rate limit warnings and lab capacity."""
 
-from checksum.planner import recommend_tier, _check_warnings
+from novascan.planner import recommend_tier, _check_warnings
 
 
 class TestMaasWarnings:

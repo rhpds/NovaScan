@@ -4,8 +4,8 @@
 import pytest
 from pathlib import Path
 
-from checksum.detectors import llm_imports, model_names, concurrency
-from checksum.catalog import BUILTIN_CATALOG, MAAS_MODELS, lookup_models
+from novascan.detectors import llm_imports, model_names, concurrency
+from novascan.catalog import BUILTIN_CATALOG, MAAS_MODELS, lookup_models
 
 
 # ─── Framework Detection ───

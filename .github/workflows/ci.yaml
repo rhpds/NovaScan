@@ -17,4 +17,4 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: pip install pyyaml click rich pytest pytest-cov
-      - run: PYTHONPATH=src python -m pytest tests/ -v --cov=checksum
+      - run: PYTHONPATH=src python -m pytest tests/ -v --cov=novascan

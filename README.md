@@ -1,8 +1,8 @@
-# CheckSum — RHDP Capacity Scanner & Provisioning Planner
+# NovaScan — RHDP Capacity Scanner & Provisioning Planner
 
 Scan any demo repository and produce a right-sized RHDP provisioning recommendation. Detects LLM models, application infrastructure, resource requirements, and generates ready-to-commit AgnosticV catalog items.
 
-Pair with **LiftOff** (provisioning engine) for the full workflow: CheckSum scans, LiftOff deploys.
+Pair with **LiftOff** (provisioning engine) for the full workflow: NovaScan scans, LiftOff deploys.
 
 ## Install
 
@@ -14,24 +14,24 @@ pip install -e ".[dev]"
 
 ```bash
 # Scan a repo — what does it need?
-checksum scan ~/Documents/my-demo
+novascan scan ~/Documents/my-demo
 
 # Plan provisioning — what tier and topology?
-checksum plan ~/Documents/my-demo
+novascan plan ~/Documents/my-demo
 
 # Plan for a 60-seat lab
-checksum plan ~/Documents/my-demo --seats 60
+novascan plan ~/Documents/my-demo --seats 60
 
 # Generate a complete agnosticv catalog item
-checksum plan ~/Documents/my-demo --seats 60 \
+novascan plan ~/Documents/my-demo --seats 60 \
   --generate-agnosticv ./agnosticv/ai-qs-my-demo-tenant/ \
   --repo-url https://github.com/rh-ai-quickstart/my-demo
 
 # Validate existing agnosticv config against a repo scan
-checksum validate ~/Documents/my-demo ~/agnosticv/my-demo-tenant/common.yaml
+novascan validate ~/Documents/my-demo ~/agnosticv/my-demo-tenant/common.yaml
 
 # Batch scan all repos in a directory
-checksum batch ~/Documents/ -o results/all-repos.yaml
+novascan batch ~/Documents/ -o results/all-repos.yaml
 ```
 
 ## What It Detects
@@ -70,7 +70,7 @@ checksum batch ~/Documents/ -o results/all-repos.yaml
 
 ## Lab Capacity Planning
 
-With `--seats N`, CheckSum produces:
+With `--seats N`, NovaScan produces:
 
 - **Per-seat estimate**: CPU, memory, storage for one user
 - **Lab total**: per-seat x seats + shared infra overhead (Keycloak, OpenShift AI, ArgoCD)
@@ -95,7 +95,7 @@ Follows the `quickstart_deploy_via_make` pattern used by production AI quickstar
 
 ## Validation
 
-`checksum validate` compares a CheckSum scan against an existing agnosticv config:
+`novascan validate` compares a NovaScan scan against an existing agnosticv config:
 
 - **Tier match**: Does the provisioned tier match the recommendation?
 - **Resource deltas**: Over-provisioned or under-provisioned CPU/memory/storage?
@@ -103,14 +103,14 @@ Follows the `quickstart_deploy_via_make` pattern used by production AI quickstar
 
 ## Claude Code Skill
 
-CheckSum is available as a global Claude Code skill:
+NovaScan is available as a global Claude Code skill:
 
 ```
-/checksum ~/Documents/my-demo
-/checksum ~/Documents/my-demo 60
+/novascan ~/Documents/my-demo
+/novascan ~/Documents/my-demo 60
 ```
 
-Skill file: `~/.claude/commands/checksum.md`
+Skill file: `~/.claude/commands/novascan.md`
 
 ## Development
 

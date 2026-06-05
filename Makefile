@@ -7,7 +7,7 @@ test:
 	python3 -m pytest tests/ -v
 
 test-cov:
-	python3 -m pytest tests/ -v --cov=checksum --cov-report=term-missing
+	python3 -m pytest tests/ -v --cov=novascan --cov-report=term-missing
 
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null; true

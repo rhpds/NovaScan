@@ -1,4 +1,4 @@
-"""CheckSum CLI — scan repos and plan RHDP provisioning."""
+"""NovaScan CLI — scan repos and plan RHDP provisioning."""
 
 from __future__ import annotations
 
@@ -12,9 +12,9 @@ from .validator import compare_against_agnosticv
 
 
 @click.group()
-@click.version_option(version="0.1.0", package_name="rhdp-checksum")
+@click.version_option(version="0.1.0", package_name="rhdp-novascan")
 def main():
-    """CheckSum — scan demo repos, recommend RHDP provisioning tiers."""
+    """NovaScan — scan demo repos, recommend RHDP provisioning tiers."""
     pass
 
 

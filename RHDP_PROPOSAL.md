@@ -1,4 +1,4 @@
-# Proposal: Right-Sizing RHDP AI Quickstart Provisioning with CheckSum
+# Proposal: Right-Sizing RHDP AI Quickstart Provisioning with NovaScan
 
 ## The Problem
 
@@ -19,9 +19,9 @@ AI quickstart catalog items use blanket resource quotas that waste cluster capac
 - More clusters needed for the same number of users
 - Higher infrastructure cost per lab session
 
-## The Solution: CheckSum
+## The Solution: NovaScan
 
-CheckSum is a capacity scanner that analyzes demo repos and produces right-sized provisioning configs.
+NovaScan is a capacity scanner that analyzes demo repos and produces right-sized provisioning configs.
 
 **What it scans:**
 - LLM models and frameworks (OpenAI, vLLM, LangChain, etc.)
@@ -38,7 +38,7 @@ CheckSum is a capacity scanner that analyzes demo repos and produces right-sized
 **Example:**
 ```bash
 # Scan a quickstart repo
-checksum plan ~/repos/it-self-service-agent --seats 60
+novascan plan ~/repos/it-self-service-agent --seats 60
 
 # Output:
 #   Per seat:    12 CPU, 16Gi, 12Gi storage
@@ -47,27 +47,27 @@ checksum plan ~/repos/it-self-service-agent --seats 60
 #   Warning:     MAAS RPM 600 exceeds 90 RPM limit
 
 # Generate a right-sized agnosticv catalog item
-checksum plan ~/repos/it-self-service-agent --seats 60 \
+novascan plan ~/repos/it-self-service-agent --seats 60 \
   --generate-agnosticv ./agnosticv/ai-qs-it-self-service-tenant/ \
   --repo-url https://github.com/rh-ai-quickstart/it-self-service-agent
 ```
 
 ## Integration Path
 
-1. **Immediate**: Run CheckSum against all 5 existing quickstarts, produce right-sized quotas
-2. **Process**: Make CheckSum part of the quickstart onboarding checklist — scan before writing agnosticv configs
-3. **CI**: Add CheckSum validation to agnosticv PR reviews — flag over-provisioned quotas
-4. **Long term**: CheckSum as a pre-flight step in the Babylon provisioning pipeline
+1. **Immediate**: Run NovaScan against all 5 existing quickstarts, produce right-sized quotas
+2. **Process**: Make NovaScan part of the quickstart onboarding checklist — scan before writing agnosticv configs
+3. **CI**: Add NovaScan validation to agnosticv PR reviews — flag over-provisioned quotas
+4. **Long term**: NovaScan as a pre-flight step in the Babylon provisioning pipeline
 
 ## Current State
 
 - 69 tests, all passing
 - Scanned 28 repos (20 local + 8 rh-ai-quickstart)
-- Available as Claude Code skill: `/checksum`
-- Repo: ready to push to `rhpds/checksum`
+- Available as Claude Code skill: `/novascan`
+- Repo: ready to push to `rhpds/novascan`
 
 ## Ask
 
-1. Review CheckSum and provide feedback on the provisioning model
+1. Review NovaScan and provide feedback on the provisioning model
 2. Run it against the full quickstart catalog to validate recommendations
 3. Discuss integration into the agnosticv review process

@@ -5,7 +5,7 @@ import pytest
 import yaml
 from pathlib import Path
 
-from checksum.generator import generate_agnosticv, write_agnosticv
+from novascan.generator import generate_agnosticv, write_agnosticv
 
 
 @pytest.fixture

@@ -1,6 +1,6 @@
-"""Tests for the CheckSum capacity planner."""
+"""Tests for the NovaScan capacity planner."""
 
-from checksum.planner import recommend_tier
+from novascan.planner import recommend_tier
 
 
 def test_empty_scan_recommends_pilot():

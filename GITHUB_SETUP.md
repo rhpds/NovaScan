@@ -1,12 +1,12 @@
 # GitHub Repository Setup
 
-## CheckSum
+## NovaScan
 
-Repo: https://github.com/rhpds/CheckSum
+Repo: https://github.com/rhpds/NovaScan
 
 ```bash
-cd ~/Documents/checksum
-git remote add origin https://github.com/rhpds/CheckSum.git
+cd ~/Documents/novascan
+git remote add origin https://github.com/rhpds/NovaScan.git
 git push -u origin main
 ```
 

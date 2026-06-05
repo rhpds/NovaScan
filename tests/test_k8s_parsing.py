@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """K8s manifest parsing edge cases."""
 
-from checksum.detectors.k8s_manifests import _parse_cpu, _parse_quantity_gb
+from novascan.detectors.k8s_manifests import _parse_cpu, _parse_quantity_gb
 
 
 class TestParseCpu:

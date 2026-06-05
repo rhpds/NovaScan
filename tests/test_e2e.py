@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""End-to-end: CheckSum scan → plan → generate → validate pipeline."""
+"""End-to-end: NovaScan scan → plan → generate → validate pipeline."""
 
 import pytest
 import yaml
 from pathlib import Path
 
-from checksum.scanner import scan_repo
-from checksum.planner import recommend_tier
-from checksum.generator import generate_agnosticv, write_agnosticv
-from checksum.validator import compare_against_agnosticv
+from novascan.scanner import scan_repo
+from novascan.planner import recommend_tier
+from novascan.generator import generate_agnosticv, write_agnosticv
+from novascan.validator import compare_against_agnosticv
 
 DEMO_REPO = Path("/Users/jkershaw/Documents/red_hat_intel_partner_demo")
 LIFTOFF_REPO = Path("/Users/jkershaw/Documents/liftoff")

@@ -12,37 +12,37 @@ class TestPackageStructure:
 
     def test_pyproject_has_cli_entry(self, project_root):
         content = (project_root / "pyproject.toml").read_text()
-        assert "checksum" in content
+        assert "novascan" in content
 
     def test_all_modules_import(self):
-        import checksum.cli
-        import checksum.scanner
-        import checksum.planner
-        import checksum.catalog
-        import checksum.output
-        import checksum.detectors.llm_imports
-        import checksum.detectors.model_names
-        import checksum.detectors.k8s_manifests
-        import checksum.detectors.concurrency
+        import novascan.cli
+        import novascan.scanner
+        import novascan.planner
+        import novascan.catalog
+        import novascan.output
+        import novascan.detectors.llm_imports
+        import novascan.detectors.model_names
+        import novascan.detectors.k8s_manifests
+        import novascan.detectors.concurrency
 
     def test_cli_has_scan_command(self):
-        from checksum.cli import main
+        from novascan.cli import main
         assert "scan" in main.commands
 
     def test_cli_has_plan_command(self):
-        from checksum.cli import main
+        from novascan.cli import main
         assert "plan" in main.commands
 
     def test_cli_has_validate_command(self):
-        from checksum.cli import main
+        from novascan.cli import main
         assert "validate" in main.commands
 
 
 class TestPythonCompat:
 
     def test_future_annotations(self, src_root):
-        checksum_dir = src_root / "checksum"
-        for py_file in checksum_dir.rglob("*.py"):
+        novascan_dir = src_root / "novascan"
+        for py_file in novascan_dir.rglob("*.py"):
             if py_file.name == "__init__.py":
                 continue
             content = py_file.read_text()

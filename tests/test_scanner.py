@@ -1,9 +1,9 @@
-"""Tests for the CheckSum scanner."""
+"""Tests for the NovaScan scanner."""
 
 import pytest
 from pathlib import Path
 
-from checksum.scanner import scan_repo
+from novascan.scanner import scan_repo
 
 
 @pytest.fixture
@@ -12,7 +12,7 @@ def project_root():
 
 
 def test_scan_self(project_root):
-    """CheckSum should be able to scan the parent Intel demo repo."""
+    """NovaScan should be able to scan the parent Intel demo repo."""
     demo_repo = project_root
     if not (demo_repo / "gateway").exists():
         pytest.skip("Not running from within the Intel demo repo")

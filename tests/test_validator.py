@@ -4,7 +4,7 @@
 import pytest
 from pathlib import Path
 
-from checksum.validator import (
+from novascan.validator import (
     _extract_tier,
     _extract_quota,
     _extract_models,

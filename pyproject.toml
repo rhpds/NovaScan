@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "rhdp-checksum"
+name = "rhdp-novascan"
 version = "0.1.0"
 description = "RHDP capacity planner — scan demo repos, recommend provisioning tiers"
 readme = "README.md"
@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [project.scripts]
-checksum = "checksum.cli:main"
+novascan = "novascan.cli:main"
 
 [project.optional-dependencies]
 dev = [
@@ -28,4 +28,4 @@ dev = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/checksum"]
+packages = ["src/novascan"]
