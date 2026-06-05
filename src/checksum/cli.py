@@ -41,14 +41,15 @@ def scan(repo_path: Path, fmt: str):
 @click.option("--generate-agnosticv", "agnosticv_dir", type=click.Path(path_type=Path), default=None,
               help="Generate a complete agnosticv catalog item directory")
 @click.option("--repo-url", default="", help="Git URL for the demo repo (used in quickstart_deploy_via_make)")
-def plan(repo_path: Path, output: Path | None, seats: int, agnosticv_dir: Path | None, repo_url: str):
+@click.option("--slug", default="", help="Custom namespace suffix slug (default: derived from repo name)")
+def plan(repo_path: Path, output: Path | None, seats: int, agnosticv_dir: Path | None, repo_url: str, slug: str):
     """Generate a capacity plan with tier recommendation."""
     results = scan_repo(repo_path)
     capacity_plan = recommend_tier(results, seats=seats)
 
     if agnosticv_dir:
         from .generator import generate_agnosticv, write_agnosticv
-        config = generate_agnosticv(capacity_plan, seats=seats, repo_url=repo_url)
+        config = generate_agnosticv(capacity_plan, seats=seats, repo_url=repo_url, slug_override=slug or None)
         write_agnosticv(config, agnosticv_dir)
         click.echo(f"AgnosticV catalog item written to {agnosticv_dir}/")
         click.echo(f"  common.yaml, dev.yaml, test.yaml, prod.yaml")

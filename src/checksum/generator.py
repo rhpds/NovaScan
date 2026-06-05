@@ -9,7 +9,7 @@ from pathlib import Path
 import yaml
 
 
-def generate_agnosticv(capacity_plan: dict, seats: int = 1, repo_url: str = "") -> dict:
+def generate_agnosticv(capacity_plan: dict, seats: int = 1, repo_url: str = "", slug_override: str | None = None) -> dict:
     """Generate a complete agnosticv tenant common.yaml from scan results."""
     tier = capacity_plan.get("recommended_tier", "partner")
     estimate = capacity_plan.get("resource_estimate", {})
@@ -18,7 +18,7 @@ def generate_agnosticv(capacity_plan: dict, seats: int = 1, repo_url: str = "") 
     repo = capacity_plan.get("repo", "")
 
     repo_name = Path(repo).name if repo else "demo"
-    slug = repo_name.lower().replace("_", "-").replace(" ", "-")
+    slug = slug_override or repo_name.lower().replace("_", "-").replace(" ", "-")
     maas_models = [m["name"] for m in models if m.get("source") == "maas"]
 
     cpu = max(int(math.ceil(estimate.get("cpu_cores", 8))), 8)

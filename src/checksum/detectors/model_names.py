@@ -11,6 +11,7 @@ MODEL_PATTERNS = [
     r'model["\']?\s*[:=]\s*["\']([^\"\'\n]{4,80})["\']',
     r'MODEL_ID["\']?\s*[:=]\s*["\']([^\"\'\n]{4,80})["\']',
     r'model_name["\']?\s*[:=]\s*["\']([^\"\'\n]{4,80})["\']',
+    r'model\s*:\s*([\w/.-]*(?:llama|granite|phi|qwen|deepseek|mistral|gemma|codellama|nomic|starcoder|whisper|bert|embed)[\w/.-]*)',
 ]
 
 
