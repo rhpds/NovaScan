@@ -62,34 +62,38 @@ def _estimate_resources(
     models: list, k8s_resources: dict, concurrency_info: dict, infra: dict | None = None
 ) -> dict:
     """Estimate total resource requirements."""
-    cpu_cores = 4
-    memory_gb = 8
+    base_cpu = 4
+    base_memory = 8
     storage_gb = 20
     gpu_count = 0
+
+    local_models = [m for m in models if m.get("source") == "local"]
+    local_cpu = min(len(local_models), 3) * 4
+    local_mem = sum(m.get("memory_gb", 0) for m in local_models)
 
     for model in models:
         if "gpu" in model.get("hardware", []):
             gpu_count = max(gpu_count, 1)
-        mem = model.get("memory_gb", 0)
-        if model.get("source") == "local":
-            memory_gb += mem
-            cpu_cores += 4
 
-    if k8s_resources.get("total_cpu_request"):
-        cpu_cores = max(cpu_cores, k8s_resources["total_cpu_request"])
-    if k8s_resources.get("total_memory_gb"):
-        memory_gb = max(memory_gb, k8s_resources["total_memory_gb"])
-    if k8s_resources.get("total_storage_gb"):
-        storage_gb = max(storage_gb, k8s_resources["total_storage_gb"])
+    cpu_cores = base_cpu + local_cpu
+    memory_gb = base_memory + local_mem
+
+    k8s_cpu = k8s_resources.get("total_cpu_request", 0)
+    k8s_mem = k8s_resources.get("total_memory_gb", 0)
+    k8s_stor = k8s_resources.get("total_storage_gb", 0)
 
     if infra:
         helm = infra.get("helm", {})
-        if helm.get("total_cpu_request", 0) > 0:
-            cpu_cores = max(cpu_cores, helm["total_cpu_request"])
-        if helm.get("total_memory_gb", 0) > 0:
-            memory_gb = max(memory_gb, helm["total_memory_gb"])
-        if helm.get("total_storage_gb", 0) > 0:
-            storage_gb = max(storage_gb, helm["total_storage_gb"])
+        if helm.get("total_cpu_request", 0) > k8s_cpu:
+            k8s_cpu = helm["total_cpu_request"]
+        if helm.get("total_memory_gb", 0) > k8s_mem:
+            k8s_mem = helm["total_memory_gb"]
+        if helm.get("total_storage_gb", 0) > k8s_stor:
+            k8s_stor = helm["total_storage_gb"]
+
+    cpu_cores = max(cpu_cores, k8s_cpu) if k8s_cpu else cpu_cores
+    memory_gb = max(memory_gb, k8s_mem) if k8s_mem else memory_gb
+    storage_gb = max(storage_gb, k8s_stor) if k8s_stor else storage_gb
 
     max_concurrent = concurrency_info.get("max_concurrent", 1)
     maas_rpm = min(max_concurrent, 10) * 10
@@ -100,5 +104,5 @@ def _estimate_resources(
         "storage_gb": storage_gb,
         "gpu_count": gpu_count,
         "maas_rpm_estimate": maas_rpm,
-        "local_inference": any(m.get("source") == "local" for m in models),
+        "local_inference": bool(local_models),
     }

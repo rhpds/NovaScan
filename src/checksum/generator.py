@@ -62,17 +62,24 @@ def generate_agnosticv(capacity_plan: dict, seats: int = 1, repo_url: str = "") 
         config["ocp4_workload_litellm_virtual_keys_duration"] = "7d"
         config["ocp4_workload_litellm_virtual_keys_models"] = maas_models
 
-    deploy_method = infra.get("helm", {}).get("deploy_method")
-    if deploy_method == "helm-via-make" and repo_url:
+    if repo_url:
         config["quickstart_deploy_via_make_repo_url"] = repo_url
         config["quickstart_deploy_via_make_scm_ref"] = "main"
         config["quickstart_deploy_via_make_directory"] = "helm"
         config["quickstart_deploy_via_make_params"] = {
             "NAMESPACE": f"user-{{{{ guid }}}}-{slug}",
         }
+        config["quickstart_deploy_via_make_uninstall_params"] = {
+            "NAMESPACE": f"user-{{{{ guid }}}}-{slug}",
+        }
+
+    config["requester_email"] = f"rhdp-{{{{ guid }}}}@demo.redhat.com"
+    config["catalog_item_name"] = f"ai-quickstarts.ai-qs-{slug}-tenant.event"
 
     config["openshift_api_url"] = "{{ sandbox_openshift_api_url }}"
     config["openshift_cluster_admin_token"] = "{{ cluster_admin_agnosticd_sa_token }}"
+
+    config["ocp4_workload_showroom_passthrough_user_data"] = True
 
     config["__meta__"] = _build_meta(slug, repo_url, seats)
 
@@ -121,6 +128,9 @@ def _build_workloads(tier: str, infra: dict) -> list:
 
 def _build_meta(slug: str, repo_url: str, seats: int) -> dict:
     return {
+        "access_control": {
+            "allow_groups": ["rhpds-devs-quickstart-ai"],
+        },
         "asset_uuid": str(uuid.uuid4()),
         "owners": {
             "maintainer": [

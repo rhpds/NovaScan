@@ -34,19 +34,23 @@ def detect(source_files: list[Path], config_files: list[Path]) -> dict:
                 pass
 
     all_resources = {**values_resources, **template_resources}
-    total_cpu = sum(r.get("cpu_request", 0) for r in all_resources.values() if isinstance(r, dict))
-    total_mem = sum(r.get("memory_request_gb", 0) for r in all_resources.values() if isinstance(r, dict))
+    total_cpu = sum(
+        r.get("cpu_request", 0) * r.get("replicas", 1)
+        for r in all_resources.values() if isinstance(r, dict)
+    )
+    total_mem = sum(
+        r.get("memory_request_gb", 0) * r.get("replicas", 1)
+        for r in all_resources.values() if isinstance(r, dict)
+    )
     total_storage = sum(r.get("storage_gb", 0) for r in all_resources.values() if isinstance(r, dict))
-    replicas = sum(r.get("replicas", 1) for r in all_resources.values() if isinstance(r, dict) and "cpu_request" in r)
 
     return {
         "charts_found": len(charts),
         "deploy_method": deploy_method,
         "components": all_resources,
-        "total_cpu_request": round(total_cpu * max(replicas, 1) if total_cpu else 0, 2),
+        "total_cpu_request": round(total_cpu, 2),
         "total_memory_gb": round(total_mem, 2),
         "total_storage_gb": round(total_storage, 2),
-        "total_replicas": replicas,
     }
 
 

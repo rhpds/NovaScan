@@ -1,0 +1,53 @@
+#!/bin/bash
+# Pre-commit hook: block secrets, tokens, and keys
+
+set -euo pipefail
+
+RED="[0;31m"
+NC="[0m"
+
+FILES=$(git diff --cached --name-only --diff-filter=ACM)
+[ -z "$FILES" ] && exit 0
+
+FILES=$(echo "$FILES" | grep -v "^\.githooks/pre-commit$" || true)
+[ -z "$FILES" ] && exit 0
+
+FAILED=0
+
+for f in $FILES; do
+    case "$f" in
+        .env|.env.local|.env.*.local)
+            echo -e "${RED}BLOCKED [env file] $f${NC}"
+            FAILED=1 ;;
+        *.pem|*.key|*.p12|*.pfx)
+            echo -e "${RED}BLOCKED [key/cert] $f${NC}"
+            FAILED=1 ;;
+    esac
+done
+
+check_pattern() {
+    local label="$1"
+    local pattern="$2"
+    for f in $FILES; do
+        matches=$(git show ":$f" 2>/dev/null | grep -nE -- "$pattern" || true)
+        if [ -n "$matches" ]; then
+            echo -e "${RED}BLOCKED [$label] in $f:${NC}"
+            echo "$matches" | head -3
+            FAILED=1
+        fi
+    done
+}
+
+check_pattern "API Key (sk-)"     "sk-[A-Za-z0-9_-]{10,}"
+check_pattern "JWT Token"         "eyJhbGciOi[A-Za-z0-9_-]{20,}"
+check_pattern "HuggingFace Token" "hf_[A-Za-z0-9]{10,}"
+check_pattern "GitHub Token"      "gh[ps]_[A-Za-z0-9]{10,}"
+check_pattern "AWS Access Key"    "AKIA[A-Z0-9]{16}"
+check_pattern "Private Key"       "-----BEGIN .* PRIVATE KEY-----|-----BEGIN PRIVATE KEY-----"
+
+if [ $FAILED -eq 1 ]; then
+    echo -e "
+${RED}Commit rejected — remove secrets/tokens.${NC}"
+    echo "  False positive? Use: git commit --no-verify"
+    exit 1
+fi
