@@ -65,6 +65,8 @@ def recommend_tier(scan_results: dict, seats: int = 1) -> dict:
     topology = infra.get("topology", "namespace") if infra else "namespace"
     infra_summary = _build_infra_summary(infra) if infra else {}
 
+    cost_analysis = _build_cost_analysis(models, seats)
+
     result = {
         "repo": scan_results.get("repo", ""),
         "recommended_tier": tier,
@@ -76,6 +78,7 @@ def recommend_tier(scan_results: dict, seats: int = 1) -> dict:
             "memory_gb": memory_gb,
             "storage_gb": estimate.get("storage_gb", 20),
         },
+        "cost_analysis": cost_analysis,
         "resource_estimate": estimate,
         "models_detected": models,
         "agnosticv_overrides": _generate_overrides(tier, estimate, models),
@@ -176,6 +179,82 @@ def _check_warnings(estimate: dict, seats: int) -> list[str]:
         )
 
     return warnings
+
+
+def _build_cost_analysis(models: list, seats: int) -> dict:
+    """Build cost analysis from detected models."""
+    from .catalog import estimate_session_cost, estimate_event_cost, get_consolidation_warnings
+
+    if not models:
+        return {"total_per_session": 0, "total_event": 0, "approval_tier": 1, "models": []}
+
+    model_costs = []
+    total_session = 0
+    max_tier = 1
+    maas_models = [m for m in models if m.get("source") == "maas"]
+
+    for m in maas_models:
+        # Guess interaction pattern from model type
+        name = m["name"]
+        if "embed" in name.lower() or "nomic" in name.lower():
+            pattern = "embedding"
+            requests = 50
+        elif m.get("params_b", 0) > 100:
+            pattern = "agentic"
+            requests = 10
+        elif m.get("params_b", 0) > 10:
+            pattern = "chat_context"
+            requests = 20
+        else:
+            pattern = "simple_qa"
+            requests = 20
+
+        cost = estimate_session_cost(name, pattern, requests)
+        model_costs.append(cost)
+        total_session += cost["session_cost"]
+        max_tier = max(max_tier, cost["approval_tier"])
+
+    # Event cost
+    overhead = 1.15
+    event_cost = total_session * seats * overhead if seats > 1 else total_session
+
+    # Consolidation warnings
+    all_model_names = [m["name"] for m in models]
+    consolidation = get_consolidation_warnings(all_model_names)
+
+    # Cost-saving recommendations
+    recommendations = []
+    expensive = [c for c in model_costs if c["session_cost"] > 0.50]
+    for c in expensive:
+        if c.get("replacement"):
+            alt = estimate_session_cost(c["replacement"], "chat_context", 20)
+            savings = c["session_cost"] - alt["session_cost"]
+            if savings > 0:
+                recommendations.append(
+                    f"Replace {c['model']} (${c['session_cost']:.2f}/session) with "
+                    f"{c['replacement']} (${alt['session_cost']:.4f}/session) — "
+                    f"save ${savings:.2f}/user, ${savings * seats * overhead:.0f}/event"
+                )
+        elif c["session_cost"] > 1.00:
+            recommendations.append(
+                f"{c['model']} costs ${c['session_cost']:.2f}/user/session — "
+                f"consider qwen3-14b at ~$0.02/session (open model, 100x cheaper)"
+            )
+
+    return {
+        "per_session_cost": round(total_session, 4),
+        "event_cost": round(event_cost, 2) if seats > 1 else None,
+        "seats": seats if seats > 1 else None,
+        "approval_tier": max_tier,
+        "approval_label": {1: "Self-Serve", 2: "Justified", 3: "Exceptional"}.get(max_tier, "?"),
+        "model_costs": [
+            {"model": c["model"], "pattern": c["pattern"], "session_cost": c["session_cost"],
+             "status": c["status"], "replacement": c.get("replacement")}
+            for c in model_costs
+        ],
+        "consolidation_warnings": consolidation,
+        "cost_recommendations": recommendations,
+    }
 
 
 def _needs_gateway(scan_results: dict) -> bool:

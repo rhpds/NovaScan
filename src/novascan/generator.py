@@ -62,6 +62,34 @@ def generate_agnosticv(capacity_plan: dict, seats: int = 1, repo_url: str = "", 
         config["ocp4_workload_litellm_virtual_keys_duration"] = "7d"
         config["ocp4_workload_litellm_virtual_keys_models"] = maas_models
 
+    # AI Model Requirements (RHDP Developer Intake Form)
+    from .catalog import BUILTIN_CATALOG, INTERACTION_PATTERNS, _normalize_name
+    ai_model_reqs = []
+    for model_name in maas_models:
+        key = _normalize_name(model_name)
+        info = BUILTIN_CATALOG.get(key, BUILTIN_CATALOG.get(model_name, {}))
+        vertex_id = info.get("vertex_ai_id", "")
+        if "embed" in model_name.lower():
+            pattern = INTERACTION_PATTERNS["embedding"]
+            requests = 50
+        else:
+            pattern = INTERACTION_PATTERNS["chat_context"]
+            requests = 20
+        ai_model_reqs.append({
+            "name": model_name,
+            "purpose": f"{'Embedding' if 'embed' in model_name.lower() else 'Inference'} for demo",
+            "access_method": "litemaas",
+            "vertex_ai_model_id": vertex_id or model_name,
+            "estimated_input_tokens_per_request": pattern["input"],
+            "estimated_output_tokens_per_request": pattern["output"],
+            "estimated_requests_per_session": requests,
+            "estimated_session_duration_hours": 4,
+            "max_concurrent_users": seats,
+            "expected_total_users": seats * 4,
+        })
+    if ai_model_reqs:
+        config["ai_model_requirements"] = {"models": ai_model_reqs}
+
     if repo_url:
         config["quickstart_deploy_via_make_repo_url"] = repo_url
         config["quickstart_deploy_via_make_scm_ref"] = "main"
