@@ -5,11 +5,12 @@ from __future__ import annotations
 import uuid
 import math
 from pathlib import Path
+from typing import Optional
 
 import yaml
 
 
-def generate_agnosticv(capacity_plan: dict, seats: int = 1, repo_url: str = "", slug_override: str | None = None) -> dict:
+def generate_agnosticv(capacity_plan: dict, seats: int = 1, repo_url: str = "", slug_override: Optional[str] = None) -> dict:
     """Generate a complete agnosticv tenant common.yaml from scan results."""
     tier = capacity_plan.get("recommended_tier", "partner")
     estimate = capacity_plan.get("resource_estimate", {})

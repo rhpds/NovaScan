@@ -58,7 +58,7 @@ def _detect_containers(source_files: list[Path], config_files: list[Path]) -> di
             containerfiles.append(str(f))
 
     images = set()
-    image_pattern = re.compile(r'image:\s*["\']?([a-z0-9][a-z0-9._/-]+(?::[a-z0-9._-]+)?)["\']?', re.IGNORECASE)
+    image_pattern = re.compile(r'image:\s*["\']?([a-z0-9][a-z0-9._/-]+(?::[a-z0-9._-]+)?)["\']?')
     for f in config_files:
         if f.suffix not in {".yaml", ".yml"}:
             continue

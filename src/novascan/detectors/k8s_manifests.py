@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
 
 import yaml
+
+from ..parsing import parse_cpu, parse_mem_gb
 
 
 def detect(config_files: list[Path]) -> dict:
@@ -34,7 +35,7 @@ def detect(config_files: list[Path]) -> dict:
 
                 if doc.get("kind") == "PersistentVolumeClaim":
                     storage = doc.get("spec", {}).get("resources", {}).get("requests", {}).get("storage", "")
-                    total_storage_gb += _parse_quantity_gb(storage)
+                    total_storage_gb += parse_mem_gb(storage)
         except (yaml.YAMLError, OSError):
             continue
 
@@ -61,28 +62,6 @@ def _extract_resources(doc: dict) -> tuple[float, float]:
         requests = c.get("resources", {}).get("requests", {})
         cpu = requests.get("cpu", "0")
         memory = requests.get("memory", "0")
-        cpu_total += _parse_cpu(cpu)
-        mem_total += _parse_quantity_gb(memory)
+        cpu_total += parse_cpu(cpu)
+        mem_total += parse_mem_gb(memory)
     return cpu_total, mem_total
-
-
-def _parse_cpu(val: str) -> float:
-    """Parse CPU quantity (e.g., '500m', '2', '1.5')."""
-    val = str(val).strip()
-    if val.endswith("m"):
-        return float(val[:-1]) / 1000
-    return float(val)
-
-
-def _parse_quantity_gb(val: str) -> float:
-    """Parse memory/storage quantity to GB."""
-    val = str(val).strip()
-    if not val or val == "0":
-        return 0.0
-    match = re.match(r"^(\d+(?:\.\d+)?)\s*(Gi|Mi|Ki|G|M|K|Ti)?$", val)
-    if not match:
-        return 0.0
-    num = float(match.group(1))
-    unit = match.group(2) or ""
-    multipliers = {"Ki": 1/1048576, "Mi": 1/1024, "Gi": 1, "Ti": 1024, "K": 1/1000000, "M": 1/1000, "G": 1}
-    return num * multipliers.get(unit, 1)

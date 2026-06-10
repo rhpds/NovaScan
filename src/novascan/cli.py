@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import click
 from pathlib import Path
+from typing import Optional
 
 from .scanner import scan_repo
 from .planner import recommend_tier
@@ -42,7 +43,7 @@ def scan(repo_path: Path, fmt: str):
               help="Generate a complete agnosticv catalog item directory")
 @click.option("--repo-url", default="", help="Git URL for the demo repo (used in quickstart_deploy_via_make)")
 @click.option("--slug", default="", help="Custom namespace suffix slug (default: derived from repo name)")
-def plan(repo_path: Path, output: Path | None, seats: int, agnosticv_dir: Path | None, repo_url: str, slug: str):
+def plan(repo_path: Path, output: Optional[Path], seats: int, agnosticv_dir: Optional[Path], repo_url: str, slug: str):
     """Generate a capacity plan with tier recommendation."""
     results = scan_repo(repo_path)
     capacity_plan = recommend_tier(results, seats=seats)

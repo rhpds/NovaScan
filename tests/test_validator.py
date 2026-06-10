@@ -8,10 +8,9 @@ from novascan.validator import (
     _extract_tier,
     _extract_quota,
     _extract_models,
-    _parse_cpu_str,
-    _parse_mem_str,
     _load_agnosticv,
 )
+from novascan.parsing import parse_cpu, parse_mem_gb
 
 
 class TestExtractTier:
@@ -72,31 +71,31 @@ class TestExtractModels:
 class TestParseCpuStr:
 
     def test_whole_number(self):
-        assert _parse_cpu_str("12") == 12.0
+        assert parse_cpu("12") == 12.0
 
     def test_quoted(self):
-        assert _parse_cpu_str('"40"') == 40.0
+        assert parse_cpu('"40"') == 40.0
 
     def test_millicores(self):
-        assert _parse_cpu_str("500m") == 0.5
+        assert parse_cpu("500m") == 0.5
 
     def test_zero(self):
-        assert _parse_cpu_str("0") == 0.0
+        assert parse_cpu("0") == 0.0
 
 
 class TestParseMemStr:
 
     def test_gi(self):
-        assert _parse_mem_str("64Gi") == 64.0
+        assert parse_mem_gb("64Gi") == 64.0
 
     def test_mi(self):
-        assert abs(_parse_mem_str("512Mi") - 0.5) < 0.01
+        assert abs(parse_mem_gb("512Mi") - 0.5) < 0.01
 
     def test_ti(self):
-        assert _parse_mem_str("1Ti") == 1024.0
+        assert parse_mem_gb("1Ti") == 1024.0
 
     def test_bare(self):
-        assert _parse_mem_str("0") == 0.0
+        assert parse_mem_gb("0") == 0.0
 
 
 class TestLoadAgnosticv:

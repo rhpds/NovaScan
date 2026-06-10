@@ -7,6 +7,8 @@ from pathlib import Path
 
 import yaml
 
+from .parsing import parse_cpu, parse_mem_gb
+
 
 def compare_against_agnosticv(capacity_plan: dict, agnosticv_path: Path) -> dict:
     """Compare a novascan capacity plan against an agnosticv config file."""
@@ -81,9 +83,9 @@ def _extract_quota(agnosticv: dict) -> dict:
     if not quota:
         return {}
     return {
-        "cpu": _parse_cpu_str(quota.get("requests.cpu", "0")),
-        "memory_gb": _parse_mem_str(quota.get("requests.memory", "0")),
-        "storage_gb": _parse_mem_str(quota.get("requests.storage", "0")),
+        "cpu": parse_cpu(quota.get("requests.cpu", "0")),
+        "memory_gb": parse_mem_gb(quota.get("requests.memory", "0")),
+        "storage_gb": parse_mem_gb(quota.get("requests.storage", "0")),
     }
 
 
@@ -97,29 +99,6 @@ def _extract_models(agnosticv: dict) -> list:
     return cleaned
 
 
-def _parse_cpu_str(val) -> float:
-    val = str(val).strip().strip('"').strip("'")
-    if val.endswith("m"):
-        return float(val[:-1]) / 1000
-    try:
-        return float(val)
-    except ValueError:
-        return 0.0
-
-
-def _parse_mem_str(val) -> float:
-    val = str(val).strip().strip('"').strip("'")
-    match = re.match(r"^(\d+(?:\.\d+)?)\s*(Gi|Mi|Ki|G|M|Ti)?$", val)
-    if not match:
-        try:
-            return float(val)
-        except ValueError:
-            return 0.0
-    num = float(match.group(1))
-    unit = match.group(2) or ""
-    multipliers = {"Ki": 1/1048576, "Mi": 1/1024, "Gi": 1, "Ti": 1024, "G": 1, "M": 1/1000}
-    return num * multipliers.get(unit, 1)
-
 
 def _compute_resource_deltas(estimate: dict, overrides: dict, actual_quota: dict) -> dict:
     """Compute resource deltas between recommended and provisioned."""
@@ -127,9 +106,9 @@ def _compute_resource_deltas(estimate: dict, overrides: dict, actual_quota: dict
         return {}
 
     rec_quota = overrides.get("ocp4_workload_tenant_namespace_default_quota", {})
-    rec_cpu = _parse_cpu_str(rec_quota.get("requests.cpu", str(estimate.get("cpu_cores", 0))))
-    rec_mem = _parse_mem_str(rec_quota.get("requests.memory", f"{estimate.get('memory_gb', 0)}Gi"))
-    rec_storage = _parse_mem_str(rec_quota.get("requests.storage", f"{estimate.get('storage_gb', 0)}Gi"))
+    rec_cpu = parse_cpu(rec_quota.get("requests.cpu", str(estimate.get("cpu_cores", 0))))
+    rec_mem = parse_mem_gb(rec_quota.get("requests.memory", f"{estimate.get('memory_gb', 0)}Gi"))
+    rec_storage = parse_mem_gb(rec_quota.get("requests.storage", f"{estimate.get('storage_gb', 0)}Gi"))
 
     actual_cpu = actual_quota.get("cpu", 0)
     actual_mem = actual_quota.get("memory_gb", 0)

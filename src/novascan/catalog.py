@@ -124,8 +124,7 @@ BUILTIN_CATALOG = {
 }
 
 MAAS_MODELS = {
-    "granite-2b-cpu", "granite-4-0-h-tiny", "phi3-mini-cpu", "qwen25-3b-cpu",
-    "codellama-7b-instruct", "granite-3-2-8b-instruct", "deepseek-r1-distill-qwen-14b",
+    "codellama-7b-instruct", "deepseek-r1-distill-qwen-14b",
     "llama-scout-17b", "microsoft-phi-4", "qwen3-14b", "nomic-embed-text-v1-5",
     "qwen3-235b", "claude-opus-4-6", "claude-sonnet-4-6", "gpt-oss-120b",
     "Llama-Guard-3-1B", "minimax-m2",

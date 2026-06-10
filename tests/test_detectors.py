@@ -99,11 +99,11 @@ class TestCatalog:
             assert "memory_gb" in info, f"{name} missing memory_gb"
 
     def test_lookup_enriches_maas_model(self):
-        raw = [{"name": "granite-2b-cpu", "files": ["test.py:1"]}]
+        raw = [{"name": "qwen3-14b", "files": ["test.py:1"]}]
         enriched = lookup_models(raw)
         assert len(enriched) == 1
         assert enriched[0]["source"] == "maas"
-        assert enriched[0]["params_b"] == 2
+        assert enriched[0]["params_b"] == 14
 
     def test_lookup_unknown_model_guesses(self):
         raw = [{"name": "some-custom-7b-model", "files": ["test.py:1"]}]

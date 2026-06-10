@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Optional
 
 from .detectors import llm_imports, model_names, k8s_manifests, concurrency, infrastructure
 from .catalog import lookup_models
@@ -48,7 +49,7 @@ def _collect_source_files(repo_path: Path) -> list[Path]:
 
 def _collect_config_files(repo_path: Path) -> list[Path]:
     """Collect YAML, JSON, and TOML config files."""
-    extensions = {".yaml", ".yml", ".json", ".toml", ".env", ".env.example"}
+    extensions = {".yaml", ".yml", ".json", ".toml"}
     exclude_dirs = {".git", "node_modules", "__pycache__", ".venv", "venv", "_archive"}
     files = []
     for f in repo_path.rglob("*"):
@@ -59,7 +60,7 @@ def _collect_config_files(repo_path: Path) -> list[Path]:
 
 
 def _estimate_resources(
-    models: list, k8s_resources: dict, concurrency_info: dict, infra: dict | None = None
+    models: list, k8s_resources: dict, concurrency_info: dict, infra: Optional[dict] = None
 ) -> dict:
     """Estimate total resource requirements."""
     base_cpu = 4
